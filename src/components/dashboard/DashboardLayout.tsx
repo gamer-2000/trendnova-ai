@@ -1,0 +1,95 @@
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const navItems = [
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard/generate", label: "Generate", icon: Wand2 },
+  { to: "/dashboard/history", label: "History", icon: History },
+  { to: "/dashboard/billing", label: "Billing", icon: CreditCard },
+  { to: "/dashboard/feedback", label: "Feedback", icon: MessageSquare },
+];
+
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const { profile, signOut } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const planColor = profile?.plan === "premium" ? "text-accent" : profile?.plan === "pro" ? "text-primary" : "text-muted-foreground";
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-border/30 bg-card/40 backdrop-blur-xl flex flex-col fixed h-full">
+        <div className="p-4 border-b border-border/30">
+          <Link to="/" className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="font-display text-lg font-bold text-foreground">TrendNova</span>
+          </Link>
+        </div>
+
+        <div className="p-3">
+          <div className="glass-card p-3 mb-4">
+            <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+            <p className={`text-xs font-semibold uppercase mt-1 ${planColor}`}>
+              {profile?.plan || "free"} plan
+            </p>
+          </div>
+        </div>
+
+        <nav className="flex-1 px-3 space-y-1">
+          {navItems.map((item) => {
+            const active = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+          {profile?.email === "fotbol668@gmail.com" && (
+            <Link
+              to="/admin"
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                location.pathname === "/admin"
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <Shield className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
+        </nav>
+
+        <div className="p-3 border-t border-border/30">
+          <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-muted-foreground" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="flex-1 ml-64 p-6 sm:p-8">
+        {children}
+      </main>
+    </div>
+  );
+};
+
+export default DashboardLayout;
