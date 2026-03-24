@@ -14,6 +14,7 @@ import HistoryPage from "./pages/HistoryPage";
 import Billing from "./pages/Billing";
 import FeedbackPage from "./pages/FeedbackPage";
 import AdminPanel from "./pages/AdminPanel";
+import GuestGenerate from "./pages/GuestGenerate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
