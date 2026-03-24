@@ -10,33 +10,40 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("Not authenticated");
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Verify user
-    const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
-    const { data: { user }, error: authError } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
-    if (authError || !user) throw new Error("Not authenticated");
+    const { contentType, topic, guest } = await req.json();
 
-    // Get user profile
-    const { data: profile } = await supabase.from("users").select("*").eq("id", user.id).single();
-    if (!profile) throw new Error("User not found");
+    let user = null;
+    let profile = null;
 
-    const { contentType, topic } = await req.json();
+    const authHeader = req.headers.get("Authorization");
 
-    // Check usage limits
-    const plan = profile.plan;
-    const usage = profile.daily_usage_count;
-    const limit = plan === "premium" ? Infinity : plan === "pro" ? 20 : 5;
+    // If not a guest request, require auth
+    if (!guest) {
+      if (!authHeader) throw new Error("Not authenticated");
 
-    if (usage >= limit) {
-      return new Response(JSON.stringify({ error: "Daily limit reached. Upgrade your plan." }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
+      const { data: { user: authUser }, error: authError } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
+      if (authError || !authUser) throw new Error("Not authenticated");
+      user = authUser;
+
+      const { data: profileData } = await supabase.from("users").select("*").eq("id", user.id).single();
+      if (!profileData) throw new Error("User not found");
+      profile = profileData;
+
+      // Check usage limits for authenticated users
+      const plan = profile.plan;
+      const usage = profile.daily_usage_count;
+      const limit = plan === "premium" ? Infinity : plan === "pro" ? 20 : 5;
+
+      if (usage >= limit) {
+        return new Response(JSON.stringify({ error: "Daily limit reached. Upgrade your plan." }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     // Generate content using Lovable AI
@@ -85,17 +92,18 @@ serve(async (req) => {
     const aiData = await aiResponse.json();
     const result = aiData.choices?.[0]?.message?.content || "No content generated";
 
-    // Increment usage
-    await supabase.from("users").update({ daily_usage_count: usage + 1 }).eq("id", user.id);
+    // Only update usage and history for authenticated users
+    if (user && profile) {
+      await supabase.from("users").update({ daily_usage_count: profile.daily_usage_count + 1 }).eq("id", user.id);
 
-    // Save to history if pro/premium
-    if (plan !== "free") {
-      await supabase.from("generations").insert({
-        user_id: user.id,
-        content_type: contentType,
-        prompt: topic,
-        result,
-      });
+      if (profile.plan !== "free") {
+        await supabase.from("generations").insert({
+          user_id: user.id,
+          content_type: contentType,
+          prompt: topic,
+          result,
+        });
+      }
     }
 
     return new Response(JSON.stringify({ result }), {
