@@ -21,23 +21,14 @@ const AdminPanel = () => {
   const { profile, loading } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
-
-  // Plan update
   const [planEmail, setPlanEmail] = useState("");
   const [planValue, setPlanValue] = useState("pro");
-
-  // Balance
   const [balEmail, setBalEmail] = useState("");
   const [balAmount, setBalAmount] = useState("");
-
-  // Reset
   const [resetEmail, setResetEmail] = useState("");
-
-  // Connection status
   const [dbStatus, setDbStatus] = useState<string | null>(null);
 
-  if (loading) return null;
-  if (profile?.email !== "fotbol668@gmail.com") return <Navigate to="/dashboard" replace />;
+  const isAdmin = profile?.email === "fotbol668@gmail.com";
 
   const fetchUsers = async () => {
     setLoadingUsers(true);
@@ -48,8 +39,11 @@ const AdminPanel = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (isAdmin) fetchUsers();
+  }, [isAdmin]);
+
+  if (loading) return null;
+  if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
   const handleUpdatePlan = async () => {
     if (!planEmail) return toast.error("Enter an email");
@@ -95,16 +89,13 @@ const AdminPanel = () => {
         </div>
       </motion.div>
 
-      {/* Users Table */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             <h2 className="font-display font-semibold text-foreground">Users</h2>
           </div>
-          <Button variant="ghost" size="sm" onClick={fetchUsers}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+          <Button variant="ghost" size="sm" onClick={fetchUsers}><RefreshCw className="h-4 w-4" /></Button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -132,9 +123,7 @@ const AdminPanel = () => {
         </div>
       </motion.div>
 
-      {/* Admin Actions Grid */}
       <div className="grid sm:grid-cols-2 gap-6">
-        {/* Update Plan */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <CreditCard className="h-4 w-4 text-primary" />
@@ -142,11 +131,7 @@ const AdminPanel = () => {
           </div>
           <div className="space-y-3">
             <Input value={planEmail} onChange={(e) => setPlanEmail(e.target.value)} placeholder="User email" className="bg-secondary border-border" />
-            <select
-              value={planValue}
-              onChange={(e) => setPlanValue(e.target.value)}
-              className="w-full h-10 rounded-lg bg-secondary border border-border px-3 text-sm text-foreground"
-            >
+            <select value={planValue} onChange={(e) => setPlanValue(e.target.value)} className="w-full h-10 rounded-lg bg-secondary border border-border px-3 text-sm text-foreground">
               <option value="free">Free</option>
               <option value="pro">Pro</option>
               <option value="premium">Premium</option>
@@ -155,7 +140,6 @@ const AdminPanel = () => {
           </div>
         </motion.div>
 
-        {/* Add Balance */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="glass-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <CreditCard className="h-4 w-4 text-primary" />
@@ -168,7 +152,6 @@ const AdminPanel = () => {
           </div>
         </motion.div>
 
-        {/* Reset Usage */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <RotateCcw className="h-4 w-4 text-primary" />
@@ -180,7 +163,6 @@ const AdminPanel = () => {
           </div>
         </motion.div>
 
-        {/* DB Status */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="glass-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <Database className="h-4 w-4 text-primary" />
