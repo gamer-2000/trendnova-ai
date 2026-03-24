@@ -18,7 +18,7 @@ const Billing = () => {
       `Hi TrendNova Team,\n\nI'd like to upgrade my plan.\n\nEmail: ${profile?.email}\nSelected Plan: ${planName}\n\nThank you!`
     );
     // Uses SUPPORT_EMAIL - replace with your actual support email
-    const supportEmail = "support@trendnova.com";
+    const supportEmail = "aaru44968@gmail.com";
     window.open(`mailto:${supportEmail}?subject=${subject}&body=${body}`);
   };
 
