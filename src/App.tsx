@@ -38,6 +38,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <DonationReminder />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
