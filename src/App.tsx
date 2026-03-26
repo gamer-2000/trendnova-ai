@@ -52,6 +52,7 @@ const App = () => (
             <Route path="/dashboard/history" element={<DashboardRoute><HistoryPage /></DashboardRoute>} />
             <Route path="/dashboard/billing" element={<DashboardRoute><Billing /></DashboardRoute>} />
             <Route path="/dashboard/feedback" element={<DashboardRoute><FeedbackPage /></DashboardRoute>} />
+            <Route path="/dashboard/thumbnails" element={<DashboardRoute><ThumbnailPage /></DashboardRoute>} />
             <Route path="/admin" element={<DashboardRoute><AdminPanel /></DashboardRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

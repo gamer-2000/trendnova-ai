@@ -59,6 +59,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
+                {"badge" in item && item.badge && (
+                  <span className="ml-auto text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
