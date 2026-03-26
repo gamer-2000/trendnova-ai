@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield } from "lucide-react";
+import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/dashboard/generate", label: "Generate", icon: Wand2 },
+  { to: "/dashboard/thumbnails", label: "Thumbnails", icon: Image, badge: "PRO" },
   { to: "/dashboard/history", label: "History", icon: History },
   { to: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { to: "/dashboard/feedback", label: "Feedback", icon: MessageSquare },
@@ -58,6 +59,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
+                {"badge" in item && item.badge && (
+                  <span className="ml-auto text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}

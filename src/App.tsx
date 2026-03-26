@@ -16,6 +16,7 @@ import FeedbackPage from "./pages/FeedbackPage";
 import AdminPanel from "./pages/AdminPanel";
 import GuestGenerate from "./pages/GuestGenerate";
 import NotFound from "./pages/NotFound";
+import ThumbnailPage from "./pages/ThumbnailPage";
 import DonationReminder from "./components/DonationReminder";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/dashboard/history" element={<DashboardRoute><HistoryPage /></DashboardRoute>} />
             <Route path="/dashboard/billing" element={<DashboardRoute><Billing /></DashboardRoute>} />
             <Route path="/dashboard/feedback" element={<DashboardRoute><FeedbackPage /></DashboardRoute>} />
+            <Route path="/dashboard/thumbnails" element={<DashboardRoute><ThumbnailPage /></DashboardRoute>} />
             <Route path="/admin" element={<DashboardRoute><AdminPanel /></DashboardRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
