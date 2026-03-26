@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/dashboard/generate", label: "Generate", icon: Wand2 },
+  { to: "/dashboard/thumbnails", label: "Thumbnails", icon: Image, badge: "PRO" },
   { to: "/dashboard/history", label: "History", icon: History },
   { to: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { to: "/dashboard/feedback", label: "Feedback", icon: MessageSquare },
