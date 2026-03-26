@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield } from "lucide-react";
+import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
