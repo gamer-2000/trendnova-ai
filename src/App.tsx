@@ -16,6 +16,7 @@ import FeedbackPage from "./pages/FeedbackPage";
 import AdminPanel from "./pages/AdminPanel";
 import GuestGenerate from "./pages/GuestGenerate";
 import NotFound from "./pages/NotFound";
+import DonationReminder from "./components/DonationReminder";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <DonationReminder />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
