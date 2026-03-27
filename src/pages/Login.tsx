@@ -112,6 +112,17 @@ const Login = () => {
               </button>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="remember"
+              checked={rememberMe}
+              onCheckedChange={(checked) => setRememberMe(checked === true)}
+              className="border-border/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+            />
+            <label htmlFor="remember" className="text-sm text-muted-foreground cursor-pointer select-none">
+              Remember me for 30 days
+            </label>
+          </div>
           <Button variant="hero" className="w-full" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </Button>
