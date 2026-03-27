@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AdBanner from "@/components/AdBanner";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -93,6 +94,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Main */}
       <main className="flex-1 ml-64 p-6 sm:p-8">
         {children}
+        <div className="mt-8">
+          <AdBanner slot="4567890123" format="horizontal" />
+        </div>
       </main>
     </div>
   );
