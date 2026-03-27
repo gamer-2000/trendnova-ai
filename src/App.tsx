@@ -17,6 +17,8 @@ import AdminPanel from "./pages/AdminPanel";
 import GuestGenerate from "./pages/GuestGenerate";
 import NotFound from "./pages/NotFound";
 import ThumbnailPage from "./pages/ThumbnailPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import DonationReminder from "./components/DonationReminder";
 
 const queryClient = new QueryClient();
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/try" element={<GuestGenerate />} />
             <Route path="/dashboard" element={<DashboardRoute><DashboardHome /></DashboardRoute>} />
             <Route path="/dashboard/generate" element={<DashboardRoute><Generate /></DashboardRoute>} />
