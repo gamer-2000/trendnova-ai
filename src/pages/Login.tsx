@@ -34,6 +34,11 @@ const Login = () => {
       if (error) {
         toast.error(error.message);
       } else {
+        if (rememberMe) {
+          localStorage.setItem(REMEMBER_KEY, email);
+        } else {
+          localStorage.removeItem(REMEMBER_KEY);
+        }
         toast.success("Welcome back!");
         setTimeout(() => navigate("/dashboard"), 100);
       }
