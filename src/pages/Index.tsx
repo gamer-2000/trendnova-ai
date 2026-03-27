@@ -4,14 +4,24 @@ import Features from "@/components/landing/Features";
 import Pricing from "@/components/landing/Pricing";
 import Testimonials from "@/components/landing/Testimonials";
 import Footer from "@/components/landing/Footer";
+import AdBanner from "@/components/AdBanner";
 
 const Index = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
     <Hero />
+    <div className="max-w-7xl mx-auto px-4 py-4">
+      <AdBanner slot="1234567890" format="horizontal" />
+    </div>
     <Features />
+    <div className="max-w-7xl mx-auto px-4 py-4">
+      <AdBanner slot="2345678901" format="horizontal" />
+    </div>
     <Pricing />
     <Testimonials />
+    <div className="max-w-7xl mx-auto px-4 py-4">
+      <AdBanner slot="3456789012" format="horizontal" />
+    </div>
     <Footer />
   </div>
 );
