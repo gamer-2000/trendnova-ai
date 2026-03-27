@@ -17,6 +17,8 @@ import AdminPanel from "./pages/AdminPanel";
 import GuestGenerate from "./pages/GuestGenerate";
 import NotFound from "./pages/NotFound";
 import ThumbnailPage from "./pages/ThumbnailPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import DonationReminder from "./components/DonationReminder";
 
 const queryClient = new QueryClient();
