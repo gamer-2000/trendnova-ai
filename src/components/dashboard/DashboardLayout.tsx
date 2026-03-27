@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AdBanner from "@/components/AdBanner";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
