@@ -19,6 +19,8 @@ import NotFound from "./pages/NotFound";
 import ThumbnailPage from "./pages/ThumbnailPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import DonationReminder from "./components/DonationReminder";
 
 const queryClient = new QueryClient();
