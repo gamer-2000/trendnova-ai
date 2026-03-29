@@ -53,6 +53,8 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/try" element={<GuestGenerate />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
             <Route path="/dashboard" element={<DashboardRoute><DashboardHome /></DashboardRoute>} />
             <Route path="/dashboard/generate" element={<DashboardRoute><Generate /></DashboardRoute>} />
             <Route path="/dashboard/history" element={<DashboardRoute><HistoryPage /></DashboardRoute>} />
