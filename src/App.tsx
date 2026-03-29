@@ -21,7 +21,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import DonationReminder from "./components/DonationReminder";
+import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
