@@ -27,7 +27,8 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-6">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Features</a>
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Pricing</a>
-            <a href="#testimonials" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Testimonials</a>
+            <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors text-sm">About</Link>
+            <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Contact</Link>
             <Button variant="ghost" size="sm" className="gap-1 text-pink-400 hover:text-pink-300" onClick={() => setDonateOpen(true)}>
               <Heart className="h-4 w-4" /> Donate
             </Button>
