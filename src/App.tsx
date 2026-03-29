@@ -47,6 +47,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <DonationReminder />
+      <CookieConsent />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
