@@ -24,7 +24,6 @@ serve(async (req) => {
     const { data: profile } = await supabase.from("users").select("*").eq("id", user.id).single();
     if (!profile) throw new Error("User not found");
 
-    // Only pro and premium can use thumbnails
     if (profile.plan !== "pro" && profile.plan !== "premium") {
       return new Response(JSON.stringify({ error: "Thumbnail creation is available on Pro and Premium plans. Please upgrade." }), {
         status: 403,
@@ -49,7 +48,15 @@ serve(async (req) => {
         messages: [
           {
             role: "user",
-            content: `Create a professional, eye-catching YouTube thumbnail for: "${prompt}". Make it vibrant, high contrast, with bold visual elements. YouTube thumbnail style, 16:9 aspect ratio.`,
+            content: `Create a professional, ultra-high-quality YouTube thumbnail for: "${prompt}". 
+            
+Requirements:
+- 16:9 aspect ratio, 1280x720 resolution feel
+- Bold, saturated colors with high contrast
+- Clean composition with clear focal point
+- Eye-catching visual hierarchy
+- Professional and polished look
+- Style: modern, vibrant, click-worthy thumbnail that stands out in YouTube search results`,
           },
         ],
         modalities: ["image", "text"],
