@@ -25,6 +25,8 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import DonationReminder from "./components/DonationReminder";
 import CookieConsent from "./components/CookieConsent";
+import CustomCursor from "./components/CustomCursor";
+import ParticleBackground from "./components/ParticleBackground";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,8 @@ const DashboardRoute = ({ children }: { children: React.ReactNode }) => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <CustomCursor />
+      <ParticleBackground />
       <Toaster />
       <Sonner />
       <DonationReminder />
