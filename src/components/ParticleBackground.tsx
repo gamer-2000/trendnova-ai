@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+interface Particle {
   x: number;
   y: number;
   vx: number;
@@ -9,13 +11,15 @@ import { useIsMobile } from "@/hooks/use-mobile";
   color: string;
 }
 
-const PARTICLE_COUNT = 60;
 const CONNECT_DIST = 140;
 const MOUSE_RADIUS = 180;
 
 const ParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouse = useRef({ x: -9999, y: -9999 });
+  const isMobile = useIsMobile();
+
+  if (isMobile) return null;
 
   useEffect(() => {
     const canvas = canvasRef.current!;
