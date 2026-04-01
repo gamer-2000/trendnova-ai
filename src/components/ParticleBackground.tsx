@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react";
-
-interface Particle {
+import { useEffect, useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
   x: number;
   y: number;
   vx: number;
