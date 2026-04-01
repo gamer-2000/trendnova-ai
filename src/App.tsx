@@ -46,6 +46,8 @@ const DashboardRoute = ({ children }: { children: React.ReactNode }) => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <CustomCursor />
+      <ParticleBackground />
       <Toaster />
       <Sonner />
       <DonationReminder />
