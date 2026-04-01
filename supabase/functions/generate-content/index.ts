@@ -21,7 +21,6 @@ serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization");
 
-    // If not a guest request, require auth
     if (!guest) {
       if (!authHeader) throw new Error("Not authenticated");
 
@@ -34,7 +33,6 @@ serve(async (req) => {
       if (!profileData) throw new Error("User not found");
       profile = profileData;
 
-      // Check usage limits for authenticated users
       const plan = profile.plan;
       const usage = profile.daily_usage_count;
       const limit = plan === "premium" ? Infinity : plan === "pro" ? 20 : 5;
@@ -46,20 +44,71 @@ serve(async (req) => {
       }
     }
 
-    // Generate content using Lovable AI
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("AI API key not configured");
 
-    const systemPrompt = `You are TrendNova, an expert AI content creator. Generate high-quality, engaging content based on the user's request. Be creative, use proven viral content frameworks, and make the output immediately usable.`;
+    const systemPrompt = `You are TrendNova, an elite AI content strategist and copywriter. You create viral, high-converting content that drives engagement.
+
+RULES:
+- Be specific and actionable — never generic filler
+- Use proven copywriting frameworks (AIDA, PAS, hook-story-offer)
+- Include data points, statistics, or concrete examples when relevant
+- Write in a confident, energetic tone
+- Format output with clear headers, bullet points, and structure
+- Every piece must have a compelling hook and strong CTA
+- Optimize for the specific platform's algorithm and audience behavior`;
 
     const prompts: Record<string, string> = {
-      "youtube-script": `Write a complete YouTube video script about: "${topic}". Include a hook, introduction, main points with transitions, and a strong CTA. Format with timestamps.`,
-      "tiktok-idea": `Generate 5 viral TikTok/Reels content ideas about: "${topic}". For each, include: concept, hook (first 3 seconds), script outline, trending audio suggestion, and hashtags.`,
-      "blog-post": `Write an SEO-optimized blog post about: "${topic}". Include a compelling title, meta description, headers (H2/H3), introduction, body with actionable tips, and conclusion with CTA.`,
-      "social-caption": `Write 5 engaging social media captions about: "${topic}". Include versions for Instagram, Twitter, and LinkedIn. Add relevant emojis and hashtags.`,
+      "youtube-script": `Write a complete, ready-to-film YouTube video script about: "${topic}".
+
+Structure:
+1. **HOOK** (first 5 seconds) — pattern interrupt that stops scrolling
+2. **INTRO** (15-30 sec) — establish credibility + promise value
+3. **MAIN CONTENT** — 3-5 key points with examples, transitions, and retention hooks ("but here's where it gets interesting...")
+4. **CTA** — subscribe, comment prompt, next video tease
+
+Include [TIMESTAMP] markers, [B-ROLL] suggestions, and [TEXT ON SCREEN] cues.
+Aim for 8-12 minute watch time. Write conversationally as if talking to camera.`,
+
+      "tiktok-idea": `Generate 5 viral TikTok/Reels concepts about: "${topic}".
+
+For EACH idea provide:
+- **HOOK** (first 1-3 seconds — the make-or-break moment)
+- **SCRIPT** (full dialogue/narration, 30-60 seconds)
+- **VISUAL DIRECTION** (camera angles, transitions, text overlays)
+- **TRENDING AUDIO** (suggest specific sound style or trend format)
+- **HASHTAGS** (5-8 relevant + trending)
+- **POSTING TIME** suggestion
+- **ESTIMATED VIRALITY** (low/medium/high) with reasoning`,
+
+      "blog-post": `Write a comprehensive, SEO-optimized blog post about: "${topic}".
+
+Include:
+- **TITLE** (60 chars max, keyword-rich, click-worthy)
+- **META DESCRIPTION** (155 chars max)
+- **TARGET KEYWORD** + 3-5 LSI keywords
+- **INTRO** — hook with a bold statement or surprising stat
+- **BODY** — 5-7 sections with H2/H3 headers, actionable tips, examples
+- **INTERNAL LINK suggestions** (topic areas to link to)
+- **CONCLUSION** with clear CTA
+- **FAQ SECTION** (3-4 questions for featured snippets)
+
+Write 1500-2000 words. Use short paragraphs (2-3 sentences max). Include bullet points and numbered lists for scannability.`,
+
+      "social-caption": `Create 5 high-engagement social media captions about: "${topic}".
+
+For EACH caption provide versions for:
+📸 **Instagram** — storytelling format, line breaks for readability, 20-30 hashtags grouped by reach tier
+🐦 **Twitter/X** — punchy, under 280 chars, controversial or insightful angle
+💼 **LinkedIn** — professional authority, personal anecdote + lesson format, 3-5 hashtags
+
+Each caption must include:
+- A scroll-stopping first line
+- Engagement trigger (question, poll, hot take)
+- Clear CTA (save, share, comment, link in bio)`,
     };
 
-    const userPrompt = prompts[contentType] || `Generate content about: "${topic}"`;
+    const userPrompt = prompts[contentType] || `Generate expert-level content about: "${topic}". Be specific, actionable, and format clearly.`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -68,10 +117,12 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
+        stream: true,
       }),
     });
 
@@ -89,10 +140,36 @@ serve(async (req) => {
       throw new Error("AI generation failed");
     }
 
-    const aiData = await aiResponse.json();
-    const result = aiData.choices?.[0]?.message?.content || "No content generated";
+    // Parse streaming response and collect full result
+    const reader = aiResponse.body!.getReader();
+    const decoder = new TextDecoder();
+    let fullResult = "";
+    let buffer = "";
 
-    // Only update usage and history for authenticated users
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      let newlineIndex: number;
+      while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+        let line = buffer.slice(0, newlineIndex);
+        buffer = buffer.slice(newlineIndex + 1);
+        if (line.endsWith("\r")) line = line.slice(0, -1);
+        if (!line.startsWith("data: ")) continue;
+        const jsonStr = line.slice(6).trim();
+        if (jsonStr === "[DONE]") break;
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices?.[0]?.delta?.content;
+          if (content) fullResult += content;
+        } catch { /* partial chunk */ }
+      }
+    }
+
+    if (!fullResult) fullResult = "No content generated. Please try again.";
+
+    // Update usage and history for authenticated users
     if (user && profile) {
       await supabase.from("users").update({ daily_usage_count: profile.daily_usage_count + 1 }).eq("id", user.id);
 
@@ -101,12 +178,12 @@ serve(async (req) => {
           user_id: user.id,
           content_type: contentType,
           prompt: topic,
-          result,
+          result: fullResult,
         });
       }
     }
 
-    return new Response(JSON.stringify({ result }), {
+    return new Response(JSON.stringify({ result: fullResult }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
