@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
-import { Wand2, TrendingUp, Zap } from "lucide-react";
+import { Wand2, TrendingUp } from "lucide-react";
 
 const DashboardHome = () => {
   const { profile } = useAuth();
