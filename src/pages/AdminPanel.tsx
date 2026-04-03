@@ -94,7 +94,6 @@ const AdminPanel = () => {
                 <th className="text-left py-2 px-3 text-muted-foreground font-medium">Email</th>
                 <th className="text-left py-2 px-3 text-muted-foreground font-medium">Plan</th>
                 <th className="text-left py-2 px-3 text-muted-foreground font-medium">Usage</th>
-                <th className="text-left py-2 px-3 text-muted-foreground font-medium">Balance</th>
               </tr>
             </thead>
             <tbody>
