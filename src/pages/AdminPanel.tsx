@@ -52,14 +52,6 @@ const AdminPanel = () => {
     else { toast.success("Plan updated!"); fetchUsers(); }
   };
 
-  const handleAddBalance = async () => {
-    if (!balEmail || !balAmount) return toast.error("Enter email and amount");
-    const { data, error } = await supabase.functions.invoke("admin-actions", {
-      body: { action: "add-balance", email: balEmail, amount: Number(balAmount) },
-    });
-    if (error || data?.error) toast.error(data?.error || "Failed");
-    else { toast.success("Balance added!"); setBalAmount(""); fetchUsers(); }
-  };
 
   const handleResetUsage = async () => {
     if (!resetEmail) return toast.error("Enter an email");
