@@ -104,7 +104,6 @@ const AdminPanel = () => {
                   <td className="py-2 px-3 text-foreground">{u.email}</td>
                   <td className="py-2 px-3"><span className="uppercase text-xs font-semibold text-primary">{u.plan}</span></td>
                   <td className="py-2 px-3 text-foreground">{u.daily_usage_count}</td>
-                  <td className="py-2 px-3 text-foreground">₹{u.balance}</td>
                 </tr>
               ))}
             </tbody>
