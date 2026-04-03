@@ -22,8 +22,7 @@ const AdminPanel = () => {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [planEmail, setPlanEmail] = useState("");
   const [planValue, setPlanValue] = useState("pro");
-  const [balEmail, setBalEmail] = useState("");
-  const [balAmount, setBalAmount] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
   const [resetEmail, setResetEmail] = useState("");
   const [dbStatus, setDbStatus] = useState<string | null>(null);
 
