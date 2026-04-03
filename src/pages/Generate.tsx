@@ -22,7 +22,7 @@ const Generate = () => {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const maxUsage = profile?.plan === "premium" ? Infinity : profile?.plan === "pro" ? 20 : 5;
+  const maxUsage = profile?.plan === "premium" ? Infinity : profile?.plan === "pro" ? 20 : 1;
   const usageLeft = profile?.plan === "premium" ? "∞" : String(maxUsage - (profile?.daily_usage_count ?? 0));
 
   const handleGenerate = async () => {
