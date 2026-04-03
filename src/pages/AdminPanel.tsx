@@ -13,7 +13,6 @@ interface UserRow {
   email: string;
   plan: string;
   daily_usage_count: number;
-  balance: number;
   created_at: string;
 }
 
