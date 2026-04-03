@@ -23,7 +23,6 @@ const AdminPanel = () => {
   const [planEmail, setPlanEmail] = useState("");
   const [planValue, setPlanValue] = useState("pro");
   const [resetEmail, setResetEmail] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
   const [dbStatus, setDbStatus] = useState<string | null>(null);
 
   const isAdmin = profile?.email === "fotbol668@gmail.com";
