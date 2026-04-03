@@ -14,11 +14,10 @@ const DashboardHome = () => {
         <p className="text-muted-foreground text-sm mb-8">Welcome back! Here's your overview.</p>
       </motion.div>
 
-      <div className="grid sm:grid-cols-3 gap-6 mb-8">
+      <div className="grid sm:grid-cols-2 gap-6 mb-8">
         {[
           { label: "Today's Usage", value: `${profile?.daily_usage_count ?? 0} / ${maxUsage}`, icon: Wand2 },
           { label: "Current Plan", value: (profile?.plan ?? "free").toUpperCase(), icon: TrendingUp },
-          { label: "Balance", value: `₹${profile?.balance ?? 0}`, icon: Zap },
         ].map((card, i) => (
           <motion.div
             key={card.label}

@@ -7,7 +7,6 @@ interface UserProfile {
   email: string;
   plan: string;
   daily_usage_count: number;
-  balance: number;
 }
 
 interface AuthContextType {

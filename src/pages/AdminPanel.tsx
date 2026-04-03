@@ -128,18 +128,6 @@ const AdminPanel = () => {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CreditCard className="h-4 w-4 text-primary" />
-            <h3 className="font-display font-semibold text-foreground">Add Balance</h3>
-          </div>
-          <div className="space-y-3">
-            <Input value={balEmail} onChange={(e) => setBalEmail(e.target.value)} placeholder="User email" className="bg-secondary border-border" />
-            <Input type="number" value={balAmount} onChange={(e) => setBalAmount(e.target.value)} placeholder="Amount (₹)" className="bg-secondary border-border" />
-            <Button variant="hero" size="sm" onClick={handleAddBalance} className="w-full">Add Balance</Button>
-          </div>
-        </motion.div>
-
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <RotateCcw className="h-4 w-4 text-primary" />
