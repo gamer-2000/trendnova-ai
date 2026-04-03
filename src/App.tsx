@@ -27,6 +27,7 @@ import DonationReminder from "./components/DonationReminder";
 import CookieConsent from "./components/CookieConsent";
 import CustomCursor from "./components/CustomCursor";
 import ParticleBackground from "./components/ParticleBackground";
+import AnnouncementBar from "./components/AnnouncementBar";
 
 const queryClient = new QueryClient();
 
