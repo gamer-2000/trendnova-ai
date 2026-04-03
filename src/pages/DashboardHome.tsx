@@ -5,7 +5,7 @@ import { Wand2, TrendingUp } from "lucide-react";
 const DashboardHome = () => {
   const { profile } = useAuth();
 
-  const maxUsage = profile?.plan === "premium" ? "∞" : profile?.plan === "pro" ? "20" : "5";
+  const maxUsage = profile?.plan === "premium" ? "∞" : profile?.plan === "pro" ? "20" : "1";
 
   return (
     <div>
