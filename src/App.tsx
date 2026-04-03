@@ -49,6 +49,7 @@ const App = () => (
     <TooltipProvider>
       <CustomCursor />
       <ParticleBackground />
+      <AnnouncementBar />
       <Toaster />
       <Sonner />
       <DonationReminder />
