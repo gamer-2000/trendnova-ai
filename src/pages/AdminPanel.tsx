@@ -13,7 +13,6 @@ interface UserRow {
   email: string;
   plan: string;
   daily_usage_count: number;
-  balance: number;
   created_at: string;
 }
 
@@ -23,8 +22,6 @@ const AdminPanel = () => {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [planEmail, setPlanEmail] = useState("");
   const [planValue, setPlanValue] = useState("pro");
-  const [balEmail, setBalEmail] = useState("");
-  const [balAmount, setBalAmount] = useState("");
   const [resetEmail, setResetEmail] = useState("");
   const [dbStatus, setDbStatus] = useState<string | null>(null);
 
@@ -54,14 +51,6 @@ const AdminPanel = () => {
     else { toast.success("Plan updated!"); fetchUsers(); }
   };
 
-  const handleAddBalance = async () => {
-    if (!balEmail || !balAmount) return toast.error("Enter email and amount");
-    const { data, error } = await supabase.functions.invoke("admin-actions", {
-      body: { action: "add-balance", email: balEmail, amount: Number(balAmount) },
-    });
-    if (error || data?.error) toast.error(data?.error || "Failed");
-    else { toast.success("Balance added!"); setBalAmount(""); fetchUsers(); }
-  };
 
   const handleResetUsage = async () => {
     if (!resetEmail) return toast.error("Enter an email");
@@ -104,7 +93,6 @@ const AdminPanel = () => {
                 <th className="text-left py-2 px-3 text-muted-foreground font-medium">Email</th>
                 <th className="text-left py-2 px-3 text-muted-foreground font-medium">Plan</th>
                 <th className="text-left py-2 px-3 text-muted-foreground font-medium">Usage</th>
-                <th className="text-left py-2 px-3 text-muted-foreground font-medium">Balance</th>
               </tr>
             </thead>
             <tbody>
@@ -115,7 +103,6 @@ const AdminPanel = () => {
                   <td className="py-2 px-3 text-foreground">{u.email}</td>
                   <td className="py-2 px-3"><span className="uppercase text-xs font-semibold text-primary">{u.plan}</span></td>
                   <td className="py-2 px-3 text-foreground">{u.daily_usage_count}</td>
-                  <td className="py-2 px-3 text-foreground">₹{u.balance}</td>
                 </tr>
               ))}
             </tbody>
@@ -137,18 +124,6 @@ const AdminPanel = () => {
               <option value="premium">Premium</option>
             </select>
             <Button variant="hero" size="sm" onClick={handleUpdatePlan} className="w-full">Update</Button>
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CreditCard className="h-4 w-4 text-primary" />
-            <h3 className="font-display font-semibold text-foreground">Add Balance</h3>
-          </div>
-          <div className="space-y-3">
-            <Input value={balEmail} onChange={(e) => setBalEmail(e.target.value)} placeholder="User email" className="bg-secondary border-border" />
-            <Input type="number" value={balAmount} onChange={(e) => setBalAmount(e.target.value)} placeholder="Amount (₹)" className="bg-secondary border-border" />
-            <Button variant="hero" size="sm" onClick={handleAddBalance} className="w-full">Add Balance</Button>
           </div>
         </motion.div>
 

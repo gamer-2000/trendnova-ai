@@ -63,11 +63,6 @@
     @apply bg-background text-foreground font-body antialiased;
   }
 
-  @media (pointer: fine) {
-    * {
-      cursor: none !important;
-    }
-  }
 }
 
 @layer components {
