@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const ANNOUNCEMENTS = [
   "🚀 New: Faster AI generation with upgraded models!",
-  "✨ Custom cursor & particle effects added",
-  "🎨 Festival-themed UI updates are live",
+  "✨ Particle effects & performance optimizations added",
   "🔒 Improved authentication system with Google Sign-In",
 ];
 
