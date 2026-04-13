@@ -47,68 +47,75 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("AI API key not configured");
 
-    const systemPrompt = `You are TrendNova, an elite AI content strategist and copywriter. You create viral, high-converting content that drives engagement.
+    const systemPrompt = `You are a skilled content writer who sounds like a real person — not a marketing bot. Your writing is warm, specific, and conversational.
 
 RULES:
-- Be specific and actionable — never generic filler
-- Use proven copywriting frameworks (AIDA, PAS, hook-story-offer)
-- Include data points, statistics, or concrete examples when relevant
-- Write in a confident, energetic tone
-- Format output with clear headers, bullet points, and structure
-- Every piece must have a compelling hook and strong CTA
-- Optimize for the specific platform's algorithm and audience behavior`;
+- Write like a human talks. Use contractions, casual phrasing, imperfect sentences when it feels natural.
+- NEVER use phrases like "game-changer", "dive deep", "unlock", "leverage", "in today's fast-paced world", "without further ado", or any other overused AI/marketing clichés.
+- Be specific and useful — no filler paragraphs that say nothing.
+- Use real-world examples, relatable scenarios, personal-feeling anecdotes.
+- Vary sentence length. Mix short punchy lines with longer ones.
+- Don't over-structure. Not everything needs a numbered list or bold headers.
+- Write with personality — a little humor, a little opinion, a little edge.
+- Sound like someone who actually knows the topic, not someone summarizing Google results.`;
 
     const prompts: Record<string, string> = {
-      "youtube-script": `Write a complete, ready-to-film YouTube video script about: "${topic}".
+      "youtube-script": `Write a YouTube video script about: "${topic}".
 
-Structure:
-1. **HOOK** (first 5 seconds) — pattern interrupt that stops scrolling
-2. **INTRO** (15-30 sec) — establish credibility + promise value
-3. **MAIN CONTENT** — 3-5 key points with examples, transitions, and retention hooks ("but here's where it gets interesting...")
-4. **CTA** — subscribe, comment prompt, next video tease
-
-Include [TIMESTAMP] markers, [B-ROLL] suggestions, and [TEXT ON SCREEN] cues.
-Aim for 8-12 minute watch time. Write conversationally as if talking to camera.`,
-
-      "tiktok-idea": `Generate 5 viral TikTok/Reels concepts about: "${topic}".
-
-For EACH idea provide:
-- **HOOK** (first 1-3 seconds — the make-or-break moment)
-- **SCRIPT** (full dialogue/narration, 30-60 seconds)
-- **VISUAL DIRECTION** (camera angles, transitions, text overlays)
-- **TRENDING AUDIO** (suggest specific sound style or trend format)
-- **HASHTAGS** (5-8 relevant + trending)
-- **POSTING TIME** suggestion
-- **ESTIMATED VIRALITY** (low/medium/high) with reasoning`,
-
-      "blog-post": `Write a comprehensive, SEO-optimized blog post about: "${topic}".
+Write it the way a real YouTuber would talk on camera — casual, engaging, with personality.
 
 Include:
-- **TITLE** (60 chars max, keyword-rich, click-worthy)
-- **META DESCRIPTION** (155 chars max)
-- **TARGET KEYWORD** + 3-5 LSI keywords
-- **INTRO** — hook with a bold statement or surprising stat
-- **BODY** — 5-7 sections with H2/H3 headers, actionable tips, examples
-- **INTERNAL LINK suggestions** (topic areas to link to)
-- **CONCLUSION** with clear CTA
-- **FAQ SECTION** (3-4 questions for featured snippets)
+- An opening hook (first 5 seconds) that's genuinely interesting, not clickbaity nonsense
+- A brief intro where you set up what the video's about and why it matters
+- The main content — talk through 3-5 points naturally, with real examples, transitions, and moments where you'd pause or react
+- A closing that doesn't feel forced — mention subscribing naturally, ask a real question
 
-Write 1500-2000 words. Use short paragraphs (2-3 sentences max). Include bullet points and numbered lists for scannability.`,
+Add [B-ROLL] and [CUT TO] notes where it makes sense.
+Write for about 8-12 minutes of talking. Sound like a person, not a teleprompter.`,
 
-      "social-caption": `Create 5 high-engagement social media captions about: "${topic}".
+      "tiktok-idea": `Come up with 5 TikTok/Reels ideas about: "${topic}".
 
-For EACH caption provide versions for:
-📸 **Instagram** — storytelling format, line breaks for readability, 20-30 hashtags grouped by reach tier
-🐦 **Twitter/X** — punchy, under 280 chars, controversial or insightful angle
-💼 **LinkedIn** — professional authority, personal anecdote + lesson format, 3-5 hashtags
+For each one give me:
+- The hook (what you say/show in the first 2 seconds to stop someone scrolling)
+- The full script or narration (30-60 seconds, written how someone would actually talk)
+- What's on screen (camera angles, text overlays, cuts)
+- What kind of audio/sound would work
+- 5-8 hashtags
+- Why you think it would do well (be honest — not everything goes viral)
 
-Each caption must include:
-- A scroll-stopping first line
-- Engagement trigger (question, poll, hot take)
-- Clear CTA (save, share, comment, link in bio)`,
+Make these feel like real creator ideas, not a content factory output.`,
+
+      "blog-post": `Write a blog post about: "${topic}".
+
+Write it like a knowledgeable friend explaining something — not like a corporate blog.
+
+Include:
+- A title that's interesting and specific (under 60 characters)
+- A meta description (under 155 characters)
+- An opening that hooks with a real story, surprising fact, or bold opinion
+- 5-7 sections that flow naturally — use headers but don't force every paragraph into a rigid template
+- Real examples, specific tips, things the reader can actually do
+- A conclusion that doesn't just repeat everything you said
+- 3-4 FAQ questions people would actually google
+
+Aim for 1500-2000 words. Keep paragraphs short (2-3 sentences). Use lists when they make sense, not just to pad the word count.`,
+
+      "social-caption": `Write 5 social media captions about: "${topic}".
+
+For each, write versions for:
+📸 Instagram — tell a mini-story, use line breaks, include 15-20 relevant hashtags
+🐦 Twitter/X — punchy, under 280 chars, say something interesting or slightly controversial  
+💼 LinkedIn — share an insight or lesson, sound smart but not pretentious, 3-5 hashtags
+
+Each caption needs:
+- A first line that makes someone stop scrolling
+- Something that makes people want to respond (a question, a hot take, something relatable)
+- A natural CTA (not "LINK IN BIO!!!" — more like "what do you think?" or "save this for later")
+
+Sound like a real person posting, not a brand account.`,
     };
 
-    const userPrompt = prompts[contentType] || `Generate expert-level content about: "${topic}". Be specific, actionable, and format clearly.`;
+    const userPrompt = prompts[contentType] || `Write something useful and interesting about: "${topic}". Be specific, sound human, and make it actually worth reading.`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -137,10 +144,9 @@ Each caption must include:
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      throw new Error("AI generation failed");
+      throw new Error("Content generation failed");
     }
 
-    // Parse streaming response and collect full result
     const reader = aiResponse.body!.getReader();
     const decoder = new TextDecoder();
     let fullResult = "";
@@ -169,7 +175,6 @@ Each caption must include:
 
     if (!fullResult) fullResult = "No content generated. Please try again.";
 
-    // Update usage and history for authenticated users
     if (user && profile) {
       await supabase.from("users").update({ daily_usage_count: profile.daily_usage_count + 1 }).eq("id", user.id);
 
