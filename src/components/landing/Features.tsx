@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
-import { Video, Smartphone, FileText, MessageSquare, Zap, TrendingUp } from "lucide-react";
+import { Video, Smartphone, FileText, MessageSquare, Clock, Lightbulb } from "lucide-react";
 
 const features = [
-  { icon: Video, title: "YouTube Scripts", desc: "Full video scripts with hooks, structure, and CTAs that drive engagement." },
-  { icon: Smartphone, title: "TikTok & Reels Ideas", desc: "Trending content ideas optimized for short-form virality." },
-  { icon: FileText, title: "Blog Posts", desc: "SEO-optimized articles that rank and convert readers." },
-  { icon: MessageSquare, title: "Social Captions", desc: "Scroll-stopping captions for Instagram, Twitter, and LinkedIn." },
-  { icon: Zap, title: "Instant Generation", desc: "Get results in seconds with our high-speed AI engine." },
-  { icon: TrendingUp, title: "Trend Analysis", desc: "Content suggestions based on current trending topics." },
+  { icon: Video, title: "YouTube Scripts", desc: "Complete scripts with hooks, structure, and calls-to-action — ready to film." },
+  { icon: Smartphone, title: "TikTok & Reels Ideas", desc: "Short-form content ideas that match what's trending right now." },
+  { icon: FileText, title: "Blog Posts", desc: "Well-structured articles that read naturally and rank on search." },
+  { icon: MessageSquare, title: "Social Captions", desc: "Captions that stop the scroll — for Instagram, Twitter, and LinkedIn." },
+  { icon: Clock, title: "Done in Seconds", desc: "No more writer's block. Get a solid first draft instantly." },
+  { icon: Lightbulb, title: "Fresh Ideas Daily", desc: "Content suggestions based on what people are actually searching for." },
 ];
 
 const Features = () => (
@@ -20,10 +20,10 @@ const Features = () => (
         className="text-center mb-16"
       >
         <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-          Everything You Need to Go <span className="gradient-text">Viral</span>
+          Everything You Need to <span className="gradient-text">Create</span>
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          Powerful AI tools designed for modern content creators.
+          Tools built for creators who'd rather create than sit and brainstorm for hours.
         </p>
       </motion.div>
 

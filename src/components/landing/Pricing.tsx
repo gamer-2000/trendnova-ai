@@ -8,7 +8,7 @@ const plans = [
     name: "Free",
     price: "₹0",
     period: "/month",
-    features: ["5 generations/day", "All content types", "Basic AI quality", "Community support"],
+    features: ["5 writes per day", "All content types", "Standard quality", "Community support"],
     cta: "Start Free",
     popular: false,
   },
@@ -16,7 +16,7 @@ const plans = [
     name: "Pro",
     price: "₹50",
     period: "/month",
-    features: ["20 generations/day", "Better AI quality", "Save history", "Priority support"],
+    features: ["20 writes per day", "Higher quality output", "Save your history", "Priority support"],
     cta: "Upgrade to Pro",
     popular: true,
   },
@@ -24,7 +24,7 @@ const plans = [
     name: "Premium",
     price: "₹100",
     period: "/month",
-    features: ["Unlimited generations", "Priority responses", "Advanced viral content", "1-on-1 support"],
+    features: ["Unlimited writes", "Fastest responses", "Advanced content styles", "1-on-1 support"],
     cta: "Go Premium",
     popular: false,
   },
@@ -40,7 +40,7 @@ const Pricing = () => (
         className="text-center mb-16"
       >
         <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-          Simple, <span className="gradient-text">Transparent</span> Pricing
+          Simple, <span className="gradient-text">Fair</span> Pricing
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
           Start free. Upgrade when you need more.
@@ -55,7 +55,7 @@ const Pricing = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className={`glass-card p-8 relative ${plan.popular ? "border-primary/40 shadow-[0_0_30px_hsl(175_80%_50%/0.1)]" : ""}`}
+            className={`glass-card p-8 relative ${plan.popular ? "border-primary/40" : ""}`}
           >
             {plan.popular && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 gradient-button px-4 py-1 rounded-full text-xs font-semibold">

@@ -17,7 +17,7 @@ const ThumbnailPage = () => {
   const isPaidPlan = profile?.plan === "pro" || profile?.plan === "premium";
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return toast.error("Enter a description for your thumbnail");
+    if (!prompt.trim()) return toast.error("Describe your video first");
     setLoading(true);
     setImageUrl(null);
 
@@ -33,10 +33,10 @@ const ThumbnailPage = () => {
       if (result.error) throw new Error(result.error);
       if (result.imageUrl) {
         setImageUrl(result.imageUrl);
-        toast.success("Thumbnail generated!");
+        toast.success("Thumbnail ready!");
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to generate thumbnail");
+      toast.error(err.message || "Failed to create thumbnail");
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ const ThumbnailPage = () => {
       <div>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-display text-2xl font-bold text-foreground mb-1">Thumbnail Creator</h1>
-          <p className="text-muted-foreground text-sm mb-8">AI-powered thumbnail generation</p>
+          <p className="text-muted-foreground text-sm mb-8">Create eye-catching thumbnails for your videos</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -80,7 +80,7 @@ const ThumbnailPage = () => {
     <div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="font-display text-2xl font-bold text-foreground mb-1">Thumbnail Creator</h1>
-        <p className="text-muted-foreground text-sm mb-8">Describe your video and get an AI-generated thumbnail</p>
+        <p className="text-muted-foreground text-sm mb-8">Describe your video and get a custom thumbnail</p>
       </motion.div>
 
       <motion.div
@@ -91,7 +91,7 @@ const ThumbnailPage = () => {
       >
         <div className="flex gap-3">
           <Input
-            placeholder="e.g. Top 10 AI tools for creators in 2026"
+            placeholder="e.g. Top 10 tools for creators in 2026"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !loading && handleGenerate()}
@@ -99,7 +99,7 @@ const ThumbnailPage = () => {
           />
           <Button variant="hero" onClick={handleGenerate} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Image className="h-4 w-4" />}
-            {loading ? "Generating..." : "Generate"}
+            {loading ? "Creating..." : "Create"}
           </Button>
         </div>
       </motion.div>
@@ -111,7 +111,7 @@ const ThumbnailPage = () => {
           className="glass-card p-12 flex flex-col items-center justify-center"
         >
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-          <p className="text-sm text-muted-foreground">Creating your thumbnail... this may take a moment</p>
+          <p className="text-sm text-muted-foreground">Creating your thumbnail...</p>
         </motion.div>
       )}
 
