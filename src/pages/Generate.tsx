@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Wand2, Copy, Video, Smartphone, FileText, MessageSquare } from "lucide-react";
+import { PenTool, Copy, Video, Smartphone, FileText, MessageSquare } from "lucide-react";
 
 const contentTypes = [
   { id: "youtube-script", label: "YouTube Script", icon: Video },
@@ -54,9 +54,9 @@ const Generate = () => {
 
       setResult(data.result);
       await refreshProfile();
-      toast.success("Content generated!");
+      toast.success("Done! Your content is ready.");
     } catch (err: any) {
-      toast.error(err.message || "Generation failed");
+      toast.error(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -70,9 +70,9 @@ const Generate = () => {
   return (
     <div className="max-w-4xl">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-2xl font-bold text-foreground mb-1">Generate Content</h1>
+        <h1 className="font-display text-2xl font-bold text-foreground mb-1">Write Content</h1>
         <p className="text-muted-foreground text-sm mb-8">
-          {usageLeft} generations remaining today
+          {usageLeft} writes remaining today
         </p>
       </motion.div>
 
@@ -98,7 +98,7 @@ const Generate = () => {
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Topic / Description</label>
+            <label className="text-sm font-medium text-foreground mb-1 block">What do you want to write about?</label>
             <Input
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
@@ -108,8 +108,8 @@ const Generate = () => {
           </div>
 
           <Button variant="hero" onClick={handleGenerate} disabled={loading} className="gap-2">
-            <Wand2 className="h-4 w-4" />
-            {loading ? "Generating..." : "Generate"}
+            <PenTool className="h-4 w-4" />
+            {loading ? "Writing..." : "Write It"}
           </Button>
         </div>
       </motion.div>
@@ -121,7 +121,7 @@ const Generate = () => {
           className="mt-8"
         >
           <div className="flex items-center justify-between mb-2">
-            <h2 className="font-display font-semibold text-foreground">Result</h2>
+            <h2 className="font-display font-semibold text-foreground">Your Content</h2>
             <Button variant="ghost" size="sm" onClick={copyResult} className="gap-1">
               <Copy className="h-3 w-3" /> Copy
             </Button>

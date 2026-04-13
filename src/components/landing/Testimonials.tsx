@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 const testimonials = [
-  { name: "Arjun M.", role: "YouTuber", text: "TrendNova helped me script 3 videos a week. My channel grew 40% in a month!", rating: 5 },
-  { name: "Priya S.", role: "Instagram Creator", text: "The captions are fire. My engagement rate doubled since I started using this.", rating: 5 },
-  { name: "Rahul K.", role: "Blogger", text: "I publish 5x more blog posts now. The AI quality is surprisingly good for the price.", rating: 4 },
+  { name: "Arjun M.", role: "YouTuber", text: "I used to spend 3 hours on a script. Now I get a solid draft in minutes and just tweak it. My channel grew 40% in a month.", rating: 5 },
+  { name: "Priya S.", role: "Instagram Creator", text: "The captions actually sound like me, not a robot. My engagement rate doubled since I started using this.", rating: 5 },
+  { name: "Rahul K.", role: "Blogger", text: "I publish 5x more posts now. The writing quality is honestly better than what I'd write on a bad day.", rating: 4 },
 ];
 
 const Testimonials = () => (
@@ -17,10 +17,10 @@ const Testimonials = () => (
         className="text-center mb-16"
       >
         <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-          Loved by <span className="gradient-text">Creators</span>
+          Loved by <span className="gradient-text">Real Creators</span>
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          See what our users are saying.
+          Here's what people are saying after using TrendNova.
         </p>
       </motion.div>
 

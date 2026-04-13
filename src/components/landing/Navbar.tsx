@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Menu, X, Heart } from "lucide-react";
+import { PenTool, Menu, X, Heart } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -20,7 +20,7 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/20 rounded-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
+            <PenTool className="h-6 w-6 text-primary" />
             <span className="font-display text-xl font-bold text-foreground">TrendNova</span>
           </Link>
 

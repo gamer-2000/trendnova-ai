@@ -48,15 +48,15 @@ serve(async (req) => {
         messages: [
           {
             role: "user",
-            content: `Create a professional, ultra-high-quality YouTube thumbnail for: "${prompt}". 
-            
-Requirements:
-- 16:9 aspect ratio, 1280x720 resolution feel
-- Bold, saturated colors with high contrast
-- Clean composition with clear focal point
-- Eye-catching visual hierarchy
-- Professional and polished look
-- Style: modern, vibrant, click-worthy thumbnail that stands out in YouTube search results`,
+            content: `Create a YouTube thumbnail for a video about: "${prompt}". 
+
+Make it look like a real creator made it — not overly polished or stock-photo-ish. Think:
+- Bold, readable text if text is needed (keep it to 3-5 words max)
+- A clear subject or focal point
+- High contrast colors that pop on a small screen
+- 16:9 aspect ratio, 1280x720 feel
+- The kind of thumbnail you'd actually click on while scrolling YouTube
+- Avoid generic clip-art style. Make it feel authentic and specific to the topic.`,
           },
         ],
         modalities: ["image", "text"],
