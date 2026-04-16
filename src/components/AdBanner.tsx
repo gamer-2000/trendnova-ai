@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdBannerProps {
   slot: string;
@@ -13,18 +14,22 @@ declare global {
 }
 
 const AdBanner = ({ slot, format = "auto", className = "" }: AdBannerProps) => {
+  const { profile } = useAuth();
   const adRef = useRef<HTMLDivElement>(null);
   const pushed = useRef(false);
+  const isPremium = profile?.plan === "premium";
 
   useEffect(() => {
-    if (pushed.current) return;
+    if (pushed.current || isPremium) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushed.current = true;
     } catch (e) {
       console.log("AdSense error:", e);
     }
-  }, []);
+  }, [isPremium]);
+
+  if (isPremium) return null;
 
   return (
     <div className={`ad-container overflow-hidden ${className}`} ref={adRef}>

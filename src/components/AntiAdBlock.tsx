@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AntiAdBlock = () => {
+  const { profile } = useAuth();
   const [adBlocked, setAdBlocked] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    // Skip detection for premium users
+    if (profile?.plan === "premium") return;
+
     const detectAdBlock = async () => {
       try {
-        // Try fetching a known ad script pattern
-        const response = await fetch(
+        await fetch(
           "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
           { method: "HEAD", mode: "no-cors" }
         );
@@ -19,7 +23,6 @@ const AntiAdBlock = () => {
       }
     };
 
-    // Also check if adsbygoogle was blocked
     setTimeout(() => {
       const testAd = document.createElement("div");
       testAd.innerHTML = "&nbsp;";
@@ -37,9 +40,9 @@ const AntiAdBlock = () => {
     }, 1000);
 
     detectAdBlock();
-  }, []);
+  }, [profile?.plan]);
 
-  if (!adBlocked || dismissed) return null;
+  if (profile?.plan === "premium" || !adBlocked || dismissed) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
