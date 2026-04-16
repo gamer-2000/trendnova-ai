@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdBannerProps {
   slot: string;
@@ -13,8 +14,12 @@ declare global {
 }
 
 const AdBanner = ({ slot, format = "auto", className = "" }: AdBannerProps) => {
+  const { profile } = useAuth();
   const adRef = useRef<HTMLDivElement>(null);
   const pushed = useRef(false);
+
+  // Hide ads for premium users
+  if (profile?.plan === "premium") return null;
 
   useEffect(() => {
     if (pushed.current) return;
