@@ -19,4 +19,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://trendova-ai.vercel.app/sitemap.xml
+Sitemap: https://id-preview--391be351-8880-4a58-b136-5502146d421f.lovable.app/sitemap.xml
