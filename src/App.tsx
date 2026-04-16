@@ -46,7 +46,6 @@ const DashboardRoute = ({ children }: { children: React.ReactNode }) => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AntiAdBlock />
       <AnnouncementBar />
       <Toaster />
       <Sonner />
@@ -54,6 +53,7 @@ const App = () => (
       <CookieConsent />
       <BrowserRouter>
         <AuthProvider>
+          <AntiAdBlock />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
