@@ -55,7 +55,6 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <AntiAdBlock />
-          <AdsterraBanner />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
@@ -76,6 +75,7 @@ const App = () => (
             <Route path="/admin" element={<DashboardRoute><AdminPanel /></DashboardRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <AdsterraBanner />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
