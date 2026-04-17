@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import AntiAdBlock from "@/components/AntiAdBlock";
+import AdsterraBanner from "@/components/AdsterraBanner";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -54,6 +55,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <AntiAdBlock />
+          <AdsterraBanner />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
