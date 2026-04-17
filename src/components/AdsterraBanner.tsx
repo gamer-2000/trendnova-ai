@@ -27,8 +27,12 @@ const AdsterraBanner = () => {
   // Render at the bottom of the page in normal flow (not fixed/overlay)
   // so it never interrupts the user experience mid-content.
   return (
-    <div className="w-full flex justify-center px-4 py-4 border-t border-border/20 bg-background">
-      <div id={CONTAINER_ID} className="max-w-7xl w-full" />
+    <div className="w-full flex justify-center px-4 py-4 border-t border-border/20 bg-background relative z-0">
+      <div
+        id={CONTAINER_ID}
+        className="max-w-7xl w-full overflow-hidden"
+        style={{ position: "relative" }}
+      />
     </div>
   );
 };
