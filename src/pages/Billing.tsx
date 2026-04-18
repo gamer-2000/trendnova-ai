@@ -17,9 +17,10 @@ const Billing = () => {
     const body = encodeURIComponent(
       `Hi TrendNova Team,\n\nI'd like to upgrade my plan.\n\nEmail: ${profile?.email}\nSelected Plan: ${planName}\n\nThank you!`
     );
-    // Uses SUPPORT_EMAIL - replace with your actual support email
     const supportEmail = "aaru44968@gmail.com";
-    window.open(`mailto:${supportEmail}?subject=${subject}&body=${body}`);
+    // Open Gmail compose in a new tab instead of the OS default mail client
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${supportEmail}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
