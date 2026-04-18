@@ -92,9 +92,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
       <main className="flex-1 ml-64 p-6 sm:p-8">
         {children}
-        <div className="mt-8">
-          <AdBanner slot="4567890123" format="horizontal" />
-        </div>
+        {profile?.plan !== "premium" && (
+          <div className="mt-8">
+            <AdBanner slot="4567890123" format="horizontal" />
+          </div>
+        )}
       </main>
     </div>
   );
