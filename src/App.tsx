@@ -5,8 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import AntiAdBlock from "@/components/AntiAdBlock";
-import AdsterraBanner from "@/components/AdsterraBanner";
+// ❌ Removed Adsterra + AntiAdBlock
+// import AntiAdBlock from "@/components/AntiAdBlock";
+// import AdsterraBanner from "@/components/AdsterraBanner";
+
 import UpgradePrompt from "@/components/UpgradePrompt";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -34,8 +36,17 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (!user) return <Navigate to="/login" replace />;
+
   return <>{children}</>;
 };
 
@@ -53,9 +64,12 @@ const App = () => (
       <Sonner />
       <DonationReminder />
       <CookieConsent />
+
       <BrowserRouter>
         <AuthProvider>
-          <AntiAdBlock />
+          {/* ❌ Removed AntiAdBlock */}
+          {/* <AntiAdBlock /> */}
+
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
@@ -67,16 +81,55 @@ const App = () => (
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/dashboard" element={<DashboardRoute><DashboardHome /></DashboardRoute>} />
-            <Route path="/dashboard/generate" element={<DashboardRoute><Generate /></DashboardRoute>} />
-            <Route path="/dashboard/history" element={<DashboardRoute><HistoryPage /></DashboardRoute>} />
-            <Route path="/dashboard/billing" element={<DashboardRoute><Billing /></DashboardRoute>} />
-            <Route path="/dashboard/feedback" element={<DashboardRoute><FeedbackPage /></DashboardRoute>} />
-            <Route path="/dashboard/thumbnails" element={<DashboardRoute><ThumbnailPage /></DashboardRoute>} />
-            <Route path="/admin" element={<DashboardRoute><AdminPanel /></DashboardRoute>} />
+
+            <Route path="/dashboard" element={
+              <DashboardRoute>
+                <DashboardHome />
+              </DashboardRoute>
+            } />
+
+            <Route path="/dashboard/generate" element={
+              <DashboardRoute>
+                <Generate />
+              </DashboardRoute>
+            } />
+
+            <Route path="/dashboard/history" element={
+              <DashboardRoute>
+                <HistoryPage />
+              </DashboardRoute>
+            } />
+
+            <Route path="/dashboard/billing" element={
+              <DashboardRoute>
+                <Billing />
+              </DashboardRoute>
+            } />
+
+            <Route path="/dashboard/feedback" element={
+              <DashboardRoute>
+                <FeedbackPage />
+              </DashboardRoute>
+            } />
+
+            <Route path="/dashboard/thumbnails" element={
+              <DashboardRoute>
+                <ThumbnailPage />
+              </DashboardRoute>
+            } />
+
+            <Route path="/admin" element={
+              <DashboardRoute>
+                <AdminPanel />
+              </DashboardRoute>
+            } />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <AdsterraBanner />
+
+          {/* ❌ Removed Adsterra Banner */}
+          {/* <AdsterraBanner /> */}
+
           <UpgradePrompt />
         </AuthProvider>
       </BrowserRouter>
