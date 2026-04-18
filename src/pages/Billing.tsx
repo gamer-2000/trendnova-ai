@@ -18,9 +18,17 @@ const Billing = () => {
       `Hi TrendNova Team,\n\nI'd like to upgrade my plan.\n\nEmail: ${profile?.email}\nSelected Plan: ${planName}\n\nThank you!`
     );
     const supportEmail = "aaru44968@gmail.com";
-    // Open Gmail compose in a new tab instead of the OS default mail client
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${supportEmail}&su=${subject}&body=${body}`;
-    window.open(gmailUrl, "_blank", "noopener,noreferrer");
+    // Use an anchor click so the browser treats it as a direct user navigation.
+    // window.open() to mail.google.com inside an embedded preview / popup gets
+    // blocked with "site blocked" — anchor clicks bypass that.
+    const gmailUrl = `https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=${supportEmail}&su=${subject}&body=${body}`;
+    const a = document.createElement("a");
+    a.href = gmailUrl;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   return (
