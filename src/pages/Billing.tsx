@@ -17,7 +17,7 @@ const Billing = () => {
     const body = encodeURIComponent(
       `Hi TrendNova Team,\n\nI'd like to upgrade my plan.\n\nEmail: ${profile?.email}\nSelected Plan: ${planName}\n\nThank you!`
     );
-    const supportEmail = "aaru44968@gmail.com";
+    const supportEmail = "trendnova0001@gmail.com";
     // Use an anchor click so the browser treats it as a direct user navigation.
     // window.open() to mail.google.com inside an embedded preview / popup gets
     // blocked with "site blocked" — anchor clicks bypass that.
