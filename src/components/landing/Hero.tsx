@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, PenTool } from "lucide-react";
+import { ArrowRight, PenTool, ShieldCheck, Lock, CreditCard } from "lucide-react";
 
 const Hero = () => (
   <section className="relative min-h-screen flex items-center justify-center section-padding pt-32 overflow-hidden">
@@ -63,6 +63,26 @@ const Hero = () => (
             See How It Works
           </Button>
         </a>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, delay: 0.4 }}
+        className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground"
+      >
+        <span className="inline-flex items-center gap-1.5">
+          <Lock className="h-3.5 w-3.5 text-green-400" /> HTTPS Secured
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <CreditCard className="h-3.5 w-3.5 text-green-400" /> No credit card required
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <ShieldCheck className="h-3.5 w-3.5 text-green-400" /> GDPR friendly
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <PenTool className="h-3.5 w-3.5 text-green-400" /> Google verified
+        </span>
       </motion.div>
 
       <motion.div
