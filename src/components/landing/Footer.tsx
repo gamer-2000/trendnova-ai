@@ -32,7 +32,7 @@ const Footer = () => (
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5"><Lock className="h-3.5 w-3.5 text-green-400" /> SSL Encrypted</span>
           <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-green-400" /> Privacy First</span>
-          <span className="inline-flex items-center gap-1.5"><BadgeCheck className="h-3.5 w-3.5 text-green-400" /> Google Verified Site</span>
+          <span className="inline-flex items-center gap-1.5"><BadgeCheck className="h-3.5 w-3.5 text-green-400" /> Real Email Support</span>
         </div>
         <p className="text-sm text-muted-foreground">© 2026 TrendNova. All Rights Reserved. Contact: trendnova0001@gmail.com</p>
       </div>

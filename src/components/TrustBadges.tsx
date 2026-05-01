@@ -4,9 +4,9 @@ const badges = [
   { icon: Lock, label: "Secured by HTTPS", sub: "256-bit SSL encryption" },
   { icon: CreditCard, label: "No Card Required", sub: "Free forever plan" },
   { icon: ShieldCheck, label: "GDPR Compliant", sub: "Your data is yours" },
-  { icon: BadgeCheck, label: "Google Verified", sub: "AdSense & Analytics" },
-  { icon: Users, label: "5,000+ Creators", sub: "Trusted worldwide" },
-  { icon: Globe, label: "Hosted on Vercel", sub: "Enterprise infrastructure" },
+  { icon: BadgeCheck, label: "Real Support", sub: "Email us anytime" },
+  { icon: Users, label: "Growing Community", sub: "Creators worldwide" },
+  { icon: Globe, label: "Enterprise Hosting", sub: "Powered by Vercel" },
 ];
 
 const TrustBadges = () => (

@@ -81,7 +81,7 @@ const Hero = () => (
           <ShieldCheck className="h-3.5 w-3.5 text-green-400" /> GDPR friendly
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <PenTool className="h-3.5 w-3.5 text-green-400" /> Google verified
+          <PenTool className="h-3.5 w-3.5 text-green-400" /> Real human support
         </span>
       </motion.div>
 
