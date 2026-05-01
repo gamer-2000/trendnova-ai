@@ -6,6 +6,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import Footer from "@/components/landing/Footer";
 import AdBanner from "@/components/AdBanner";
 import TrustBadges from "@/components/TrustBadges";
+import Transparency from "@/components/Transparency";
 
 const Index = () => (
   <div className="min-h-screen bg-background">
@@ -14,6 +15,7 @@ const Index = () => (
     <TrustBadges />
     <Features />
     <Pricing />
+    <Transparency />
     <Testimonials />
     <div className="max-w-7xl mx-auto px-4 py-6">
       <AdBanner slot="3456789012" format="horizontal" />
