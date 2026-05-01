@@ -31,6 +31,7 @@ import Contact from "./pages/Contact";
 import DonationReminder from "./components/DonationReminder";
 import CookieConsent from "./components/CookieConsent";
 import AnnouncementBar from "./components/AnnouncementBar";
+import TransparencyGate from "./components/TransparencyGate";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
       <AnnouncementBar />
       <Toaster />
       <Sonner />
+      <TransparencyGate />
       <DonationReminder />
       <CookieConsent />
 
