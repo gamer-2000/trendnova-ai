@@ -5,11 +5,13 @@ import Pricing from "@/components/landing/Pricing";
 import Testimonials from "@/components/landing/Testimonials";
 import Footer from "@/components/landing/Footer";
 import AdBanner from "@/components/AdBanner";
+import TrustBadges from "@/components/TrustBadges";
 
 const Index = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
     <Hero />
+    <TrustBadges />
     <Features />
     <Pricing />
     <Testimonials />

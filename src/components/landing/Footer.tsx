@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PenTool } from "lucide-react";
+import { PenTool, ShieldCheck, Lock, BadgeCheck } from "lucide-react";
 
 const Footer = () => (
   <footer className="border-t border-border/30 py-10 px-4">
@@ -28,8 +28,13 @@ const Footer = () => (
           </div>
         </div>
       </div>
-      <div className="border-t border-border/20 pt-6 text-center">
-        <p className="text-sm text-muted-foreground">© 2026 TrendNova. All Rights Reserved.</p>
+      <div className="border-t border-border/20 pt-6 flex flex-col items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5"><Lock className="h-3.5 w-3.5 text-green-400" /> SSL Encrypted</span>
+          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-green-400" /> Privacy First</span>
+          <span className="inline-flex items-center gap-1.5"><BadgeCheck className="h-3.5 w-3.5 text-green-400" /> Google Verified Site</span>
+        </div>
+        <p className="text-sm text-muted-foreground">© 2026 TrendNova. All Rights Reserved. Contact: trendnova0001@gmail.com</p>
       </div>
     </div>
   </footer>
