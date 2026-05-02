@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { PenTool, Copy, Video, Smartphone, FileText, MessageSquare, Sparkles, ArrowRight, X } from "lucide-react";
+import { Copy, Video, Smartphone, FileText, MessageSquare, Sparkles, ArrowRight, X } from "lucide-react";
 
 const GUEST_LIMIT = 3;
 const STORAGE_KEY = "trendnova_guest_usage";
@@ -150,8 +150,8 @@ const GuestGenerate = () => {
             </div>
 
             <Button variant="hero" onClick={handleGenerate} disabled={loading} className="gap-2">
-              <PenTool className="h-4 w-4" />
-              {loading ? "Writing..." : "Write It"}
+              <Sparkles className="h-4 w-4" />
+              {loading ? "Generating..." : "Generate"}
             </Button>
           </div>
         </motion.div>

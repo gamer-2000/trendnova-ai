@@ -1,12 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { PenTool, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
+import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdBanner from "@/components/AdBanner";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/dashboard/generate", label: "Write", icon: Wand2 },
+  { to: "/dashboard/generate", label: "Generate", icon: Wand2 },
   { to: "/dashboard/thumbnails", label: "Thumbnails", icon: Image, badge: "PRO" },
   { to: "/dashboard/history", label: "History", icon: History },
   { to: "/dashboard/billing", label: "Billing", icon: CreditCard },
@@ -30,7 +30,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       <aside className="w-64 border-r border-border/30 bg-card/40 backdrop-blur-xl flex flex-col fixed h-full">
         <div className="p-4 border-b border-border/30">
           <Link to="/" className="flex items-center gap-2">
-            <PenTool className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-primary" />
             <span className="font-display text-lg font-bold text-foreground">TrendNova</span>
           </Link>
         </div>

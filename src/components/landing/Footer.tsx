@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PenTool, ShieldCheck, Lock, BadgeCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, Lock, BadgeCheck } from "lucide-react";
 
 const Footer = () => (
   <footer className="border-t border-border/30 py-10 px-4">
@@ -7,7 +7,7 @@ const Footer = () => (
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <PenTool className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-primary" />
             <span className="font-display font-semibold text-foreground">TrendNova</span>
           </div>
           <p className="text-sm text-muted-foreground">A writing tool for creators, marketers, and anyone who needs content fast.</p>
