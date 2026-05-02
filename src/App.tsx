@@ -9,7 +9,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 // import AntiAdBlock from "@/components/AntiAdBlock";
 // import AdsterraBanner from "@/components/AdsterraBanner";
 
-import UpgradePrompt from "@/components/UpgradePrompt";
+
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -132,7 +132,7 @@ const App = () => (
           {/* ❌ Removed Adsterra Banner */}
           {/* <AdsterraBanner /> */}
 
-          <UpgradePrompt />
+          
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

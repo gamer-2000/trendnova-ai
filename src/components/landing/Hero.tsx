@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, PenTool, ShieldCheck, Lock, CreditCard } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Lock, CreditCard, BadgeCheck } from "lucide-react";
 
 const Hero = () => (
   <section className="relative min-h-screen flex items-center justify-center section-padding pt-32 overflow-hidden">
@@ -16,8 +16,8 @@ const Hero = () => (
         transition={{ duration: 0.7 }}
       >
         <div className="inline-flex items-center gap-2 glass-card px-4 py-2 mb-8 text-sm text-muted-foreground">
-          <PenTool className="h-4 w-4 text-primary" />
-          Your content writing assistant
+          <Sparkles className="h-4 w-4 text-primary" />
+          AI content generator
         </div>
       </motion.div>
 
@@ -27,9 +27,9 @@ const Hero = () => (
         transition={{ duration: 0.7, delay: 0.1 }}
         className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight mb-6"
       >
-        Write <span className="gradient-text">Better Content</span>
+        Generate <span className="gradient-text">Better Content</span>
         <br />
-        in Minutes
+        in Seconds
       </motion.h1>
 
       <motion.p
@@ -38,7 +38,7 @@ const Hero = () => (
         transition={{ duration: 0.7, delay: 0.2 }}
         className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
       >
-        Scripts, captions, blog posts, video ideas — all written in your voice.
+        Scripts, captions, blog posts, video ideas — all generated in your voice.
         Stop staring at a blank page.
       </motion.p>
 
@@ -81,7 +81,7 @@ const Hero = () => (
           <ShieldCheck className="h-3.5 w-3.5 text-green-400" /> GDPR friendly
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <PenTool className="h-3.5 w-3.5 text-green-400" /> Real human support
+          <BadgeCheck className="h-3.5 w-3.5 text-green-400" /> Real human support
         </span>
       </motion.div>
 

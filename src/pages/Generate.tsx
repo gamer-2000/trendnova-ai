@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { PenTool, Copy, Video, Smartphone, FileText, MessageSquare } from "lucide-react";
+import { Sparkles, Copy, Video, Smartphone, FileText, MessageSquare } from "lucide-react";
 
 const contentTypes = [
   { id: "youtube-script", label: "YouTube Script", icon: Video },
@@ -70,9 +70,9 @@ const Generate = () => {
   return (
     <div className="max-w-4xl">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-2xl font-bold text-foreground mb-1">Write Content</h1>
+        <h1 className="font-display text-2xl font-bold text-foreground mb-1">Generate Content</h1>
         <p className="text-muted-foreground text-sm mb-8">
-          {usageLeft} writes remaining today
+          {usageLeft} generations remaining today
         </p>
       </motion.div>
 
@@ -98,7 +98,7 @@ const Generate = () => {
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">What do you want to write about?</label>
+            <label className="text-sm font-medium text-foreground mb-1 block">What do you want to generate?</label>
             <Input
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
@@ -108,8 +108,8 @@ const Generate = () => {
           </div>
 
           <Button variant="hero" onClick={handleGenerate} disabled={loading} className="gap-2">
-            <PenTool className="h-4 w-4" />
-            {loading ? "Writing..." : "Write It"}
+            <Sparkles className="h-4 w-4" />
+            {loading ? "Generating..." : "Generate"}
           </Button>
         </div>
       </motion.div>
