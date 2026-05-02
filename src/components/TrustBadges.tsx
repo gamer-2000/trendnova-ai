@@ -37,8 +37,8 @@ const TrustBadges = () => (
       </div>
       <p className="text-center text-xs text-muted-foreground mt-6">
         🔒 We never sell your data. We never ask for payment details on the free plan.
-        Read our <a href="/privacy" className="text-primary underline">Privacy Policy</a> and{" "}
-        <a href="/terms" className="text-primary underline">Terms</a>.
+        Read our <Link to="/privacy" className="text-primary underline">Privacy Policy</Link> and{" "}
+        <Link to="/terms" className="text-primary underline">Terms</Link>.
       </p>
     </div>
   </section>
