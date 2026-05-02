@@ -13,7 +13,7 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:aaru44968@gmail.com?subject=Contact from ${encodeURIComponent(name)}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+    const mailtoLink = `mailto:trendnova0001@gmail.com?subject=Contact from ${encodeURIComponent(name)}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
     window.open(mailtoLink, "_blank");
     toast.success("Opening your email client...");
     setName("");
@@ -76,7 +76,7 @@ const Contact = () => {
 
         <div className="mt-8 glass-card p-4 rounded-lg text-center">
           <p className="text-sm text-muted-foreground">Or email us directly at</p>
-          <p className="text-primary font-semibold select-all">aaru44968@gmail.com</p>
+          <p className="text-primary font-semibold select-all">trendnova0001@gmail.com</p>
         </div>
       </div>
     </div>
