@@ -57,7 +57,7 @@ const About = () => (
             Have questions, feedback, or partnership inquiries? We'd love to hear from you.
           </p>
           <div className="glass-card p-4 mt-3 rounded-lg">
-            <p className="text-foreground font-semibold">Email: <span className="text-primary select-all">aaru44968@gmail.com</span></p>
+            <p className="text-foreground font-semibold">Email: <span className="text-primary select-all">trendnova0001@gmail.com</span></p>
           </div>
           <p className="text-sm mt-3">
             We typically respond within 24–48 hours. For urgent matters, please include "URGENT" in your subject line.

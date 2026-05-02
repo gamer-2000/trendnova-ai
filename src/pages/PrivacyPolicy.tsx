@@ -41,12 +41,12 @@ const PrivacyPolicy = () => (
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">6. Your Rights</h2>
-          <p>You may request access to, correction of, or deletion of your personal data at any time by contacting us at aaru44968@gmail.com.</p>
+          <p>You may request access to, correction of, or deletion of your personal data at any time by contacting us at trendnova0001@gmail.com.</p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">7. Contact</h2>
-          <p>For questions about this Privacy Policy, contact us at <span className="text-primary">aaru44968@gmail.com</span>.</p>
+          <p>For questions about this Privacy Policy, contact us at <span className="text-primary">trendnova0001@gmail.com</span>.</p>
         </section>
       </div>
     </div>

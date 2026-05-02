@@ -78,7 +78,7 @@ const DonationReminder = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="glass-card p-4 text-center">
-            <p className="text-lg font-semibold text-foreground select-all">aaru44968@gmail.com</p>
+            <p className="text-lg font-semibold text-foreground select-all">trendnova0001@gmail.com</p>
             <p className="text-xs text-muted-foreground mt-2">Send via UPI, PayPal, or any payment method to this email</p>
           </div>
         </DialogContent>
