@@ -1,4 +1,5 @@
 import { ShieldCheck, Lock, CreditCard, Users, BadgeCheck, Globe } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const badges = [
   { icon: Lock, label: "Secured by HTTPS", sub: "256-bit SSL encryption" },
