@@ -6,6 +6,139 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ---- Prompt building -------------------------------------------------------
+
+const HUMAN_SYSTEM = `You write like an actual person who knows the topic — not like an AI assistant.
+
+Hard rules (these are non-negotiable):
+- NEVER use these words or phrases: "delve", "dive deep", "dive in", "unleash", "unlock", "leverage", "game-changer", "game changer", "navigate the", "journey", "embark", "in today's fast-paced world", "in the world of", "in the realm of", "the landscape of", "ever-evolving", "cutting-edge", "revolutionize", "transform your", "elevate your", "supercharge", "harness the power", "tapestry", "testament", "boasts", "robust", "seamless", "seamlessly", "furthermore", "moreover", "additionally", "in conclusion", "it's important to note", "it's worth noting", "as an AI", "I hope this helps", "feel free to".
+- Do NOT open with "In today's…" or "Imagine…" or a definition of the topic.
+- Do NOT end with a generic wrap-up paragraph that summarizes everything you just said.
+- Do NOT bold random words for "emphasis". Bold only when it genuinely helps scanning.
+- Do NOT use emojis unless the format specifically calls for it (social posts can; scripts/blogs cannot).
+
+How to actually sound human:
+- Use contractions. Vary sentence length aggressively — some sentences should be three words.
+- Have an opinion. Take a side. Mild snark or honesty about what doesn't work is good.
+- Use concrete examples, real numbers, named products, specific scenarios. No abstract platitudes.
+- Cut every sentence that doesn't earn its place. If a paragraph could be deleted with no loss, delete it.
+- Write the way smart people talk — slightly informal, direct, sometimes funny.
+- Skip headers unless the format demands them. Most writing flows better without H2 every 100 words.
+- It's fine to start sentences with And, But, So.`;
+
+type Tone = "casual" | "professional" | "witty" | "bold" | "friendly" | "expert";
+type Length = "short" | "medium" | "long";
+
+const toneGuide: Record<Tone, string> = {
+  casual: "Conversational and relaxed — like texting a friend who happens to know the topic.",
+  professional: "Polished and credible but still human. No corporate jargon.",
+  witty: "Sharp, a bit cheeky, with dry humor. Make at least one observation that earns a smile.",
+  bold: "Confident, opinionated, willing to push back on conventional wisdom.",
+  friendly: "Warm and encouraging, like a helpful older sibling. Never saccharine.",
+  expert: "Authoritative and specific. Cite mechanisms, numbers, or trade-offs.",
+};
+
+const lengthGuide: Record<string, Record<Length, string>> = {
+  "youtube-script": {
+    short: "Aim for ~3–5 minutes of talking (about 500–700 words).",
+    medium: "Aim for ~7–10 minutes of talking (about 1100–1500 words).",
+    long: "Aim for ~12–18 minutes of talking (about 1800–2500 words).",
+  },
+  "blog-post": {
+    short: "600–900 words.",
+    medium: "1200–1700 words.",
+    long: "2000–2800 words.",
+  },
+  default: { short: "Keep it tight.", medium: "Standard length.", long: "Go in depth." },
+};
+
+function lenFor(type: string, len: Length) {
+  return (lengthGuide[type] ?? lengthGuide.default)[len];
+}
+
+function buildUserPrompt(opts: {
+  contentType: string;
+  topic: string;
+  tone: Tone;
+  length: Length;
+  audience?: string;
+  keywords?: string;
+}) {
+  const { contentType, topic, tone, length, audience, keywords } = opts;
+  const aud = audience?.trim() ? `Audience: ${audience.trim()}.` : "";
+  const kw = keywords?.trim() ? `Naturally work in (don't keyword-stuff): ${keywords.trim()}.` : "";
+  const toneLine = `Tone: ${toneGuide[tone]}`;
+  const lenLine = `Length: ${lenFor(contentType, length)}`;
+  const meta = [toneLine, lenLine, aud, kw].filter(Boolean).join("\n");
+
+  const briefs: Record<string, string> = {
+    "youtube-script": `Write a YouTube video script about: "${topic}".
+
+Structure it the way a real creator talks on camera:
+- A 5-second hook that isn't clickbait. Open with a specific claim, a question someone is actually asking, or a tiny story.
+- A short setup: what they're getting and why it's worth their time.
+- 3–5 main points, told naturally with examples, asides, and the occasional "okay so" or "here's the thing".
+- A close that earns the subscribe — give them a real reason, ask a real question, or tease a follow-up.
+
+Include [B-ROLL: ...] and [CUT TO: ...] notes where they help.`,
+
+    "tiktok-idea": `Give me 5 distinct TikTok/Reels concepts for: "${topic}".
+
+For each: a stop-the-scroll hook, the full 30–60s script in spoken voice, on-screen text overlays, suggested sound style, and 5–8 hashtags. Be honest about which one you'd bet on going viral and why.`,
+
+    "blog-post": `Write a blog post about: "${topic}".
+
+Include a title (under 60 chars), meta description (under 155 chars), and the post. Open with a specific story, sharp claim, or surprising stat — not a definition. Use H2s where they actually help. Short paragraphs. End with 3 FAQs people genuinely Google.`,
+
+    "social-caption": `Write 5 caption sets for: "${topic}".
+
+For each, provide three versions:
+- Instagram: line-broken mini-story, 12–18 relevant hashtags
+- X/Twitter: under 280 chars, one sharp idea
+- LinkedIn: an insight or lesson, 3–5 hashtags, no humble-bragging
+
+End each with a natural prompt for replies, not "link in bio!!!".`,
+
+    "email": `Write a marketing/newsletter email about: "${topic}".
+
+Provide: subject line (under 50 chars, no clickbait), preview text (under 90 chars), and the body. Open like a human, not a brand. One clear ask. End with a sign-off that fits the tone.`,
+
+    "tweet-thread": `Write a Twitter/X thread about: "${topic}".
+
+8–12 tweets. Tweet 1 must hook hard — a contrarian take, a concrete result, or a question. Each tweet under 280 chars. Number them. Last tweet has a CTA (follow, bookmark, reply) that feels earned.`,
+
+    "ad-copy": `Write ad copy for: "${topic}".
+
+Give 3 variants for each of: Facebook/Instagram, Google Search, and LinkedIn. For each variant include headline(s), primary text, and a CTA. Lead with the outcome, not the feature.`,
+
+    "product-description": `Write a product description for: "${topic}".
+
+Include a punchy one-liner, a 60–100 word story-driven description, 4–6 bullet benefits (benefit first, feature in parens), and a short SEO meta description.`,
+
+    "cold-dm": `Write 3 cold outreach DMs/emails for: "${topic}".
+
+Each one: under 90 words, personalized opener, one specific reason for the message, a low-friction ask. No "I hope this finds you well." No fake compliments.`,
+
+    "linkedin-post": `Write a LinkedIn post about: "${topic}".
+
+Hook in line 1. Use line breaks generously. One insight, told through a small story or a specific number. End with a question that's actually answerable in a comment. 150–300 words.`,
+
+    "video-hooks": `Give 10 stop-the-scroll hooks for short-form video about: "${topic}".
+
+Mix formats: contrarian claim, specific result, before/after, question, mistake reveal. Each hook under 15 words.`,
+
+    "outline": `Outline a piece of content about: "${topic}".
+
+Give a working title, the core argument in one sentence, 5–8 section headers, and 2–3 bullet beats under each header. No fluff.`,
+  };
+
+  const brief = briefs[contentType] ?? `Write something genuinely useful about: "${topic}". Be specific and human.`;
+
+  return `${meta}\n\n${brief}`;
+}
+
+// ---- Handler ---------------------------------------------------------------
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -14,14 +147,36 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { contentType, topic, guest } = await req.json();
+    const body = await req.json();
+    const {
+      contentType,
+      topic,
+      guest,
+      tone = "casual",
+      length = "medium",
+      audience,
+      keywords,
+    } = body as {
+      contentType: string;
+      topic: string;
+      guest?: boolean;
+      tone?: Tone;
+      length?: Length;
+      audience?: string;
+      keywords?: string;
+    };
+
+    if (!topic || typeof topic !== "string" || topic.trim().length < 2) {
+      return new Response(JSON.stringify({ error: "Please enter a topic." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     let user = null;
-    let profile = null;
-
-    const authHeader = req.headers.get("Authorization");
+    let profile: any = null;
 
     if (!guest) {
+      const authHeader = req.headers.get("Authorization");
       if (!authHeader) throw new Error("Not authenticated");
 
       const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
@@ -30,8 +185,16 @@ serve(async (req) => {
       user = authUser;
 
       const { data: profileData } = await supabase.from("users").select("*").eq("id", user.id).single();
-      if (!profileData) throw new Error("User not found");
+      if (!profileData) throw new Error("User profile not found. Please sign out and back in.");
       profile = profileData;
+
+      // Daily reset
+      const today = new Date().toISOString().slice(0, 10);
+      if (profile.last_reset_date && profile.last_reset_date !== today) {
+        await supabase.from("users").update({ daily_usage_count: 0, last_reset_date: today }).eq("id", user.id);
+        profile.daily_usage_count = 0;
+        profile.last_reset_date = today;
+      }
 
       const plan = profile.plan;
       const usage = profile.daily_usage_count;
@@ -47,75 +210,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("AI API key not configured");
 
-    const systemPrompt = `You are a skilled content writer who sounds like a real person — not a marketing bot. Your writing is warm, specific, and conversational.
-
-RULES:
-- Write like a human talks. Use contractions, casual phrasing, imperfect sentences when it feels natural.
-- NEVER use phrases like "game-changer", "dive deep", "unlock", "leverage", "in today's fast-paced world", "without further ado", or any other overused AI/marketing clichés.
-- Be specific and useful — no filler paragraphs that say nothing.
-- Use real-world examples, relatable scenarios, personal-feeling anecdotes.
-- Vary sentence length. Mix short punchy lines with longer ones.
-- Don't over-structure. Not everything needs a numbered list or bold headers.
-- Write with personality — a little humor, a little opinion, a little edge.
-- Sound like someone who actually knows the topic, not someone summarizing Google results.`;
-
-    const prompts: Record<string, string> = {
-      "youtube-script": `Write a YouTube video script about: "${topic}".
-
-Write it the way a real YouTuber would talk on camera — casual, engaging, with personality.
-
-Include:
-- An opening hook (first 5 seconds) that's genuinely interesting, not clickbaity nonsense
-- A brief intro where you set up what the video's about and why it matters
-- The main content — talk through 3-5 points naturally, with real examples, transitions, and moments where you'd pause or react
-- A closing that doesn't feel forced — mention subscribing naturally, ask a real question
-
-Add [B-ROLL] and [CUT TO] notes where it makes sense.
-Write for about 8-12 minutes of talking. Sound like a person, not a teleprompter.`,
-
-      "tiktok-idea": `Come up with 5 TikTok/Reels ideas about: "${topic}".
-
-For each one give me:
-- The hook (what you say/show in the first 2 seconds to stop someone scrolling)
-- The full script or narration (30-60 seconds, written how someone would actually talk)
-- What's on screen (camera angles, text overlays, cuts)
-- What kind of audio/sound would work
-- 5-8 hashtags
-- Why you think it would do well (be honest — not everything goes viral)
-
-Make these feel like real creator ideas, not a content factory output.`,
-
-      "blog-post": `Write a blog post about: "${topic}".
-
-Write it like a knowledgeable friend explaining something — not like a corporate blog.
-
-Include:
-- A title that's interesting and specific (under 60 characters)
-- A meta description (under 155 characters)
-- An opening that hooks with a real story, surprising fact, or bold opinion
-- 5-7 sections that flow naturally — use headers but don't force every paragraph into a rigid template
-- Real examples, specific tips, things the reader can actually do
-- A conclusion that doesn't just repeat everything you said
-- 3-4 FAQ questions people would actually google
-
-Aim for 1500-2000 words. Keep paragraphs short (2-3 sentences). Use lists when they make sense, not just to pad the word count.`,
-
-      "social-caption": `Write 5 social media captions about: "${topic}".
-
-For each, write versions for:
-📸 Instagram — tell a mini-story, use line breaks, include 15-20 relevant hashtags
-🐦 Twitter/X — punchy, under 280 chars, say something interesting or slightly controversial  
-💼 LinkedIn — share an insight or lesson, sound smart but not pretentious, 3-5 hashtags
-
-Each caption needs:
-- A first line that makes someone stop scrolling
-- Something that makes people want to respond (a question, a hot take, something relatable)
-- A natural CTA (not "LINK IN BIO!!!" — more like "what do you think?" or "save this for later")
-
-Sound like a real person posting, not a brand account.`,
-    };
-
-    const userPrompt = prompts[contentType] || `Write something useful and interesting about: "${topic}". Be specific, sound human, and make it actually worth reading.`;
+    const userPrompt = buildUserPrompt({ contentType, topic, tone, length, audience, keywords });
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -126,24 +221,28 @@ Sound like a real person posting, not a brand account.`,
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: HUMAN_SYSTEM },
           { role: "user", content: userPrompt },
         ],
+        temperature: 0.95,
+        top_p: 0.92,
         stream: true,
       }),
     });
 
     if (!aiResponse.ok) {
       if (aiResponse.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
+        return new Response(JSON.stringify({ error: "Too many requests. Try again in a moment." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (aiResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required." }), {
+        return new Response(JSON.stringify({ error: "AI credits exhausted. Please contact support." }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      const errText = await aiResponse.text();
+      console.error("AI gateway error:", aiResponse.status, errText);
       throw new Error("Content generation failed");
     }
 
@@ -175,6 +274,17 @@ Sound like a real person posting, not a brand account.`,
 
     if (!fullResult) fullResult = "No content generated. Please try again.";
 
+    // Post-process: strip a few common AI tells if they slipped through
+    fullResult = fullResult
+      .replace(/^\s*(Sure!|Certainly!|Of course!|Absolutely!|Here['']s|Here is)[^\n]*\n+/i, "")
+      .replace(/\n\nIn conclusion,?\s*/gi, "\n\n")
+      .replace(/\bdelve into\b/gi, "look at")
+      .replace(/\bdive deep into\b/gi, "look at")
+      .replace(/\bgame[- ]changer\b/gi, "big deal")
+      .replace(/\bleverage\b/gi, "use")
+      .replace(/\bunlock\b/gi, "get")
+      .trim();
+
     if (user && profile) {
       await supabase.from("users").update({ daily_usage_count: profile.daily_usage_count + 1 }).eq("id", user.id);
 
@@ -192,6 +302,7 @@ Sound like a real person posting, not a brand account.`,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error("generate-content error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
