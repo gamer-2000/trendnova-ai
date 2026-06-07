@@ -29,6 +29,9 @@ const Navbar = () => {
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Pricing</a>
             <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors text-sm">About</Link>
             <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Contact</Link>
+            <a href="https://discord.gg/P36rMNgnZV" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#5865F2] transition-colors text-sm flex items-center gap-1">
+              <MessageCircle className="h-4 w-4" /> Join Discord
+            </a>
             <Button variant="ghost" size="sm" className="gap-1 text-pink-400 hover:text-pink-300" onClick={() => setDonateOpen(true)}>
               <Heart className="h-4 w-4" /> Donate
             </Button>
