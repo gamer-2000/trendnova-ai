@@ -57,6 +57,9 @@ const Navbar = () => {
                 <a href="#pricing" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>Pricing</a>
                 <Link to="/about" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>About</Link>
                 <Link to="/contact" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>Contact</Link>
+                <a href="https://discord.gg/P36rMNgnZV" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#5865F2] py-2 flex items-center gap-2" onClick={() => setOpen(false)}>
+                  <MessageCircle className="h-4 w-4" /> Join Discord
+                </a>
                 <Button variant="ghost" className="w-full justify-start gap-2 text-pink-400" onClick={() => { setDonateOpen(true); setOpen(false); }}>
                   <Heart className="h-4 w-4" /> Donate
                 </Button>

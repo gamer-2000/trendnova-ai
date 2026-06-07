@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles, ShieldCheck, Lock, BadgeCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, Lock, BadgeCheck, MessageCircle } from "lucide-react";
 
 const Footer = () => (
   <footer className="border-t border-border/30 py-10 px-4">
