@@ -207,70 +207,48 @@ serve(async (req) => {
       }
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("AI API key not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not configured");
 
     const userPrompt = buildUserPrompt({ contentType, topic, tone, length, audience, keywords });
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
+    const GEMINI_MODEL = "gemini-2.5-flash";
+    const aiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: HUMAN_SYSTEM }] },
+          contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+          generationConfig: {
+            temperature: 0.95,
+            topP: 0.92,
+            maxOutputTokens: 8192,
+          },
+        }),
       },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: HUMAN_SYSTEM },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.95,
-        top_p: 0.92,
-        stream: true,
-      }),
-    });
+    );
 
     if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      console.error("Gemini API error:", aiResponse.status, errText);
       if (aiResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Too many requests. Try again in a moment." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (aiResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please contact support." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (aiResponse.status === 401 || aiResponse.status === 403) {
+        return new Response(JSON.stringify({ error: "Invalid Gemini API key. Please update GEMINI_API_KEY." }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const errText = await aiResponse.text();
-      console.error("AI gateway error:", aiResponse.status, errText);
       throw new Error("Content generation failed");
     }
 
-    const reader = aiResponse.body!.getReader();
-    const decoder = new TextDecoder();
-    let fullResult = "";
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-
-      let newlineIndex: number;
-      while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-        let line = buffer.slice(0, newlineIndex);
-        buffer = buffer.slice(newlineIndex + 1);
-        if (line.endsWith("\r")) line = line.slice(0, -1);
-        if (!line.startsWith("data: ")) continue;
-        const jsonStr = line.slice(6).trim();
-        if (jsonStr === "[DONE]") break;
-        try {
-          const parsed = JSON.parse(jsonStr);
-          const content = parsed.choices?.[0]?.delta?.content;
-          if (content) fullResult += content;
-        } catch { /* partial chunk */ }
-      }
-    }
+    const aiJson = await aiResponse.json();
+    let fullResult: string =
+      aiJson?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("") ?? "";
 
     if (!fullResult) fullResult = "No content generated. Please try again.";
 
@@ -284,6 +262,7 @@ serve(async (req) => {
       .replace(/\bleverage\b/gi, "use")
       .replace(/\bunlock\b/gi, "get")
       .trim();
+
 
     if (user && profile) {
       await supabase.from("users").update({ daily_usage_count: profile.daily_usage_count + 1 }).eq("id", user.id);
