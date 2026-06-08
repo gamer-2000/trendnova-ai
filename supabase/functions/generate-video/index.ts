@@ -123,23 +123,62 @@ serve(async (req) => {
       });
     }
 
-    const { data: profile } = await supabase
-      .from("users")
-      .select("plan, daily_usage_count, last_reset_date")
-      .eq("id", user.id)
-      .single();
+    const { data: profile, error: profileError } = await supabase
+  .from("users")
+  .select("plan, daily_usage_count, last_reset_date")
+  .eq("id", user.id)
+  .single();
 
-    if (!profile || profile.plan !== "premium") {
-      return new Response(
-        JSON.stringify({
-          error: "Video generation is available on the Premium plan.",
-        }),
-        {
-          status: 403,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
+console.log("User ID:", user.id);
+console.log("Profile:", profile);
+console.log("Profile Error:", profileError);
+
+if (profileError) {
+  return new Response(
+    JSON.stringify({
+      error: "Failed to load user profile",
+      details: profileError.message,
+    }),
+    {
+      status: 500,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+}
+
+if (!profile) {
+  return new Response(
+    JSON.stringify({
+      error: "No user profile found",
+    }),
+    {
+      status: 404,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+}
+
+if (profile.plan !== "premium") {
+  return new Response(
+    JSON.stringify({
+      error: "Premium subscription required",
+      currentPlan: profile.plan,
+    }),
+    {
+      status: 403,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+}
 
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
