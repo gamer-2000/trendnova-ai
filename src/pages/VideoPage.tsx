@@ -33,7 +33,12 @@ const orientationDims: Record<Orientation, { w: number; h: number; label: string
 
 const VideoPage = () => {
   const { profile } = useAuth();
-  const isPremium = profile?.plan === "premium";
+  const PREMIUM_PLANS = ["premium", "pro", "paid", "active", "subscribed"];
+const isPremium =
+  profile != null &&
+  PREMIUM_PLANS.includes(
+    String(profile.plan ?? "").toLowerCase().trim().replace(/[-_\s]+/g, "")
+  );
 
   const [topic, setTopic] = useState("");
   const [orientation, setOrientation] = useState<Orientation>("portrait");
