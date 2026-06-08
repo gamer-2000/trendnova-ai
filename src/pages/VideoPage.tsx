@@ -31,14 +31,15 @@ const orientationDims: Record<Orientation, { w: number; h: number; label: string
   square: { w: 720, h: 720, label: "1:1 · Feed post" },
 };
 
+const PREMIUM_PLANS = ["premium", "pro", "paid", "active", "subscribed"];
+
+const normalisePlan = (plan: string | null | undefined): string =>
+  String(plan ?? "").toLowerCase().trim().replace(/[-_\s]+/g, "");
+
 const VideoPage = () => {
-  const { profile } = useAuth();
-  const PREMIUM_PLANS = ["premium", "pro", "paid", "active", "subscribed"];
-const isPremium =
-  profile != null &&
-  PREMIUM_PLANS.includes(
-    String(profile.plan ?? "").toLowerCase().trim().replace(/[-_\s]+/g, "")
-  );
+  const { profile, loading } = useAuth();
+  const isPremium =
+    profile != null && PREMIUM_PLANS.includes(normalisePlan(profile.plan));
 
   const [topic, setTopic] = useState("");
   const [orientation, setOrientation] = useState<Orientation>("portrait");
@@ -254,6 +255,21 @@ const isPremium =
     setExporting(false);
     toast.success("Video downloaded.");
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="font-display text-2xl font-bold text-foreground mb-1 flex items-center gap-2">
+            <VideoIcon className="h-6 w-6 text-accent" /> Video Generator
+          </h1>
+        </motion.div>
+        <div className="glass-card p-8 text-center text-muted-foreground text-sm">
+          Loading your account…
+        </div>
+      </div>
+    );
+  }
 
   if (!isPremium) {
     return (
