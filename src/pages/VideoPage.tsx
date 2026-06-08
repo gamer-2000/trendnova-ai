@@ -32,7 +32,6 @@ const orientationDims: Record<Orientation, { w: number; h: number; label: string
 };
 
 const PREMIUM_PLANS = ["premium", "pro", "paid", "active", "subscribed"];
-
 const normalisePlan = (plan: string | null | undefined): string =>
   String(plan ?? "").toLowerCase().trim().replace(/[-_\s]+/g, "");
 
