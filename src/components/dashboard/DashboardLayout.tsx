@@ -1,12 +1,13 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image } from "lucide-react";
+import { Sparkles, LayoutDashboard, Wand2, History, CreditCard, MessageSquare, LogOut, Shield, Image, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdBanner from "@/components/AdBanner";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/dashboard/generate", label: "Generate", icon: Wand2 },
+  { to: "/dashboard/video", label: "Video", icon: Video, badge: "PREMIUM" },
   { to: "/dashboard/thumbnails", label: "Thumbnails", icon: Image, badge: "PRO" },
   { to: "/dashboard/history", label: "History", icon: History },
   { to: "/dashboard/billing", label: "Billing", icon: CreditCard },
