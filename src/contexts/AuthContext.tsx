@@ -7,6 +7,9 @@ interface UserProfile {
   email: string;
   plan: string;
   daily_usage_count: number;
+  balance?: number;
+  last_reset_date?: string;
+  created_at?: string;
 }
 
 interface AuthContextType {
@@ -40,9 +43,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .select("*")
         .eq("id", userId)
         .single();
-      if (data && !error) setProfile(data as UserProfile);
-    } catch {
-      // profile fetch failed silently
+      if (error) {
+        console.error("[AuthContext] fetchProfile error:", error.message, error.code);
+        return;
+      }
+      if (data) setProfile(data as UserProfile);
+    } catch (err) {
+      console.error("[AuthContext] fetchProfile exception:", err);
     }
   }, []);
 
