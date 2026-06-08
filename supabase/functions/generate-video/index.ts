@@ -30,6 +30,32 @@ Rules:
 - Open with a hook. End with a payoff or CTA (no generic "subscribe now").
 - Do NOT use these words: delve, leverage, unlock, game-changer, dive deep, journey, unleash.`;
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Structured error response that always includes diagnostic context. */
+function errorResponse(
+  status: number,
+  message: string,
+  debug: Record<string, unknown> = {},
+): Response {
+  const body = { error: message, debug };
+  console.error(`[generate-video] HTTP ${status} — ${message}`, JSON.stringify(debug));
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+/** Returns true when the plan string should be treated as premium. */
+function isPremiumPlan(plan: string | null | undefined): boolean {
+  if (plan == null) return false;
+  // Normalise: lowercase, trim, collapse hyphens/underscores/spaces
+  const normalised = String(plan).toLowerCase().trim().replace(/[-_\s]+/g, "");
+  return ["premium", "pro", "paid", "active", "subscribed"].includes(normalised);
+}
+
 async function pickPexelsVideo(
   query: string,
   orientation: Orientation,
@@ -41,28 +67,39 @@ async function pickPexelsVideo(
   url.searchParams.set("per_page", "10");
   url.searchParams.set("size", "medium");
 
-  const res = await fetch(url.toString(), {
-    headers: { Authorization: apiKey },
-  });
-  if (!res.ok) {
-    console.error("Pexels error", res.status, await res.text());
+  console.log(`[pexels] Fetching query="${query}" orientation="${orientation}"`);
+
+  let res: Response;
+  try {
+    res = await fetch(url.toString(), { headers: { Authorization: apiKey } });
+  } catch (fetchErr) {
+    console.error("[pexels] Network error:", fetchErr);
     return null;
   }
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    console.error(`[pexels] HTTP ${res.status} for query="${query}":`, body);
+    return null;
+  }
+
   const data = await res.json();
   const videos = data?.videos ?? [];
+  console.log(`[pexels] query="${query}" → ${videos.length} result(s)`);
   if (!videos.length) return null;
 
-  // Pick a random hit so each generation feels fresh
   const v = videos[Math.floor(Math.random() * videos.length)];
 
-  // Choose the smallest HD-or-SD mp4 file we can find (keeps payload light)
   const files = (v?.video_files ?? []).filter(
     (f: any) => f.file_type === "video/mp4",
   );
   files.sort((a: any, b: any) => (a.width ?? 9999) - (b.width ?? 9999));
   const chosen =
     files.find((f: any) => (f.width ?? 0) >= 640) ?? files[files.length - 1];
-  if (!chosen) return null;
+  if (!chosen) {
+    console.warn(`[pexels] No suitable mp4 file for query="${query}"`);
+    return null;
+  }
 
   return {
     url: chosen.link,
@@ -71,126 +108,159 @@ async function pickPexelsVideo(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Main handler
+// ---------------------------------------------------------------------------
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const body = await req.json();
-    const {
-      topic,
-      orientation = "portrait",
-      totalDuration = 20,
-    } = body as {
-      topic: string;
-      orientation?: Orientation;
-      totalDuration?: number;
-    };
-
-    if (!topic || typeof topic !== "string" || topic.trim().length < 2) {
-      return new Response(JSON.stringify({ error: "Please enter a topic." }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Auth + premium gate
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Not authenticated" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const anonClient = createClient(
-      supabaseUrl,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-    );
-    const {
-      data: { user },
-      error: authError,
-    } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Not authenticated" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const { data: profile, error: profileError } = await supabase
-  .from("users")
-  .select("plan, daily_usage_count, last_reset_date")
-  .eq("id", user.id)
-  .single();
-
-console.log("User ID:", user.id);
-console.log("Profile:", profile);
-console.log("Profile Error:", profileError);
-
-if (profileError) {
-  return new Response(
-    JSON.stringify({
-      error: "Failed to load user profile",
-      details: profileError.message,
-    }),
-    {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-}
-
-if (!profile) {
-  return new Response(
-    JSON.stringify({
-      error: "No user profile found",
-    }),
-    {
-      status: 404,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-}
-
-if (profile.plan !== "premium") {
-  return new Response(
-    JSON.stringify({
-      error: "Premium subscription required",
-      currentPlan: profile.plan,
-    }),
-    {
-      status: 403,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-}
-
+    // ------------------------------------------------------------------
+    // Environment
+    // ------------------------------------------------------------------
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
-    if (!GEMINI_API_KEY || !PEXELS_API_KEY) {
-      throw new Error("Server is missing GEMINI_API_KEY or PEXELS_API_KEY");
+
+    const missingEnv: string[] = [];
+    if (!supabaseUrl) missingEnv.push("SUPABASE_URL");
+    if (!supabaseServiceKey) missingEnv.push("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseAnonKey) missingEnv.push("SUPABASE_ANON_KEY");
+    if (!GEMINI_API_KEY) missingEnv.push("GEMINI_API_KEY");
+    if (!PEXELS_API_KEY) missingEnv.push("PEXELS_API_KEY");
+
+    if (missingEnv.length > 0) {
+      return errorResponse(500, "Server configuration error: missing environment variables", {
+        missingEnv,
+      });
     }
 
+    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+
+    // ------------------------------------------------------------------
+    // Parse body
+    // ------------------------------------------------------------------
+    let body: { topic?: string; orientation?: Orientation; totalDuration?: number };
+    try {
+      body = await req.json();
+    } catch {
+      return errorResponse(400, "Invalid JSON body");
+    }
+
+    const { topic, orientation = "portrait", totalDuration = 20 } = body;
+
+    if (!topic || typeof topic !== "string" || topic.trim().length < 2) {
+      return errorResponse(400, "Please enter a topic (minimum 2 characters).", { receivedTopic: topic });
+    }
+
+    // ------------------------------------------------------------------
+    // Authentication
+    // ------------------------------------------------------------------
+    const authHeader = req.headers.get("Authorization");
+    console.log("[auth] Authorization header present:", !!authHeader);
+
+    if (!authHeader) {
+      return errorResponse(401, "Not authenticated: missing Authorization header");
+    }
+
+    const token = authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7).trim()
+      : authHeader.trim();
+
+    if (!token) {
+      return errorResponse(401, "Not authenticated: empty bearer token");
+    }
+
+    const anonClient = createClient(supabaseUrl!, supabaseAnonKey!);
+    const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
+
+    console.log("[auth] getUser error:", authError?.message ?? "none");
+    console.log("[auth] User ID:", user?.id ?? "null");
+    console.log("[auth] User email:", user?.email ?? "null");
+    console.log("[auth] User role:", user?.role ?? "null");
+
+    if (authError) {
+      return errorResponse(401, "Not authenticated: token verification failed", {
+        authError: authError.message,
+      });
+    }
+    if (!user) {
+      return errorResponse(401, "Not authenticated: no user returned from token", {
+        token: token.slice(0, 12) + "…",
+      });
+    }
+
+    // ------------------------------------------------------------------
+    // Profile / plan lookup
+    // ------------------------------------------------------------------
+    console.log(`[profile] Querying users table for id=${user.id}`);
+
+    const { data: profile, error: profileError } = await supabase
+      .from("users")
+      .select("plan, daily_usage_count, last_reset_date")
+      .eq("id", user.id)
+      .maybeSingle(); // returns null (not error) when no row found
+
+    console.log("[profile] Raw profile data:", JSON.stringify(profile));
+    console.log("[profile] Profile error:", profileError ? JSON.stringify(profileError) : "none");
+
+    if (profileError) {
+      return errorResponse(500, "Failed to load user profile from database", {
+        userId: user.id,
+        dbError: profileError.message,
+        dbCode: profileError.code,
+        hint: profileError.hint ?? null,
+        details: profileError.details ?? null,
+      });
+    }
+
+    if (!profile) {
+      return errorResponse(404, "No user profile row found in the users table", {
+        userId: user.id,
+        userEmail: user.email,
+        suggestion:
+          "Ensure a row exists in public.users with id matching auth.users.id and a non-null plan value.",
+      });
+    }
+
+    const rawPlan: unknown = profile.plan;
+    const planStr = rawPlan != null ? String(rawPlan) : null;
+    const premium = isPremiumPlan(planStr);
+
+    console.log("[profile] plan (raw):", rawPlan);
+    console.log("[profile] plan (string):", planStr);
+    console.log("[profile] isPremium:", premium);
+    console.log("[profile] daily_usage_count:", profile.daily_usage_count);
+    console.log("[profile] last_reset_date:", profile.last_reset_date);
+
+    if (!premium) {
+      return errorResponse(403, "Premium subscription required to use video generation", {
+        userId: user.id,
+        userEmail: user.email,
+        planRaw: rawPlan,
+        planNormalised: planStr,
+        acceptedPlanValues: ["premium", "pro", "paid", "active", "subscribed"],
+        hint:
+          "The plan field in the users table does not match any recognised premium value. " +
+          "Update the row or check for trailing whitespace / unexpected casing.",
+      });
+    }
+
+    // ------------------------------------------------------------------
     // 1) Storyboard via Gemini
+    // ------------------------------------------------------------------
+    const clampedDuration = Math.max(8, Math.min(60, totalDuration));
     const userPrompt = `Topic: "${topic}"
-Total target duration: ${Math.max(8, Math.min(60, totalDuration))} seconds.
+Total target duration: ${clampedDuration} seconds.
 Aspect: ${orientation === "portrait" ? "9:16 short-form (TikTok/Reels)" : orientation === "landscape" ? "16:9 (YouTube)" : "1:1 (square)"}.
 Produce 4-8 scenes that flow together visually.`;
+
+    console.log("[gemini] Sending storyboard request for topic:", topic);
 
     const aiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -209,42 +279,77 @@ Produce 4-8 scenes that flow together visually.`;
       },
     );
 
+    console.log("[gemini] HTTP status:", aiRes.status);
+
     if (!aiRes.ok) {
-      const t = await aiRes.text();
-      console.error("Gemini error", aiRes.status, t);
-      throw new Error("Failed to generate storyboard");
+      const errText = await aiRes.text().catch(() => "(unreadable)");
+      console.error("[gemini] Error body:", errText);
+      return errorResponse(502, "Gemini storyboard generation failed", {
+        geminiStatus: aiRes.status,
+        geminiBody: errText.slice(0, 500),
+      });
     }
 
     const aiJson = await aiRes.json();
     const raw: string =
-      aiJson?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("") ?? "";
+      aiJson?.candidates?.[0]?.content?.parts
+        ?.map((p: any) => p?.text ?? "")
+        .join("") ?? "";
 
-    let storyboard: { title: string; scenes: Array<{ query: string; text: string; duration: number }> };
+    console.log("[gemini] Raw storyboard length:", raw.length, "chars");
+    console.log("[gemini] Raw storyboard preview:", raw.slice(0, 200));
+
+    let storyboard: {
+      title: string;
+      scenes: Array<{ query: string; text: string; duration: number }>;
+    };
+
     try {
       storyboard = JSON.parse(raw);
     } catch {
-      // try to extract JSON
+      // Attempt to extract JSON object from surrounding text
       const m = raw.match(/\{[\s\S]*\}/);
-      if (!m) throw new Error("Storyboard was not valid JSON");
-      storyboard = JSON.parse(m[0]);
+      if (!m) {
+        return errorResponse(502, "Gemini returned a storyboard that could not be parsed as JSON", {
+          rawPreview: raw.slice(0, 300),
+        });
+      }
+      try {
+        storyboard = JSON.parse(m[0]);
+      } catch (e2) {
+        return errorResponse(502, "Gemini storyboard JSON extraction failed after fallback", {
+          parseError: String(e2),
+          rawPreview: raw.slice(0, 300),
+        });
+      }
     }
 
     if (!storyboard?.scenes?.length) {
-      throw new Error("Storyboard had no scenes");
+      return errorResponse(502, "Gemini storyboard contained no scenes", {
+        storyboard,
+      });
     }
 
-    // 2) Fetch a stock clip per scene (in parallel)
-    const scenes: Scene[] = [];
+    console.log(`[gemini] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
+
+    // ------------------------------------------------------------------
+    // 2) Pexels video fetch (parallel)
+    // ------------------------------------------------------------------
+    const sceneSlice = storyboard.scenes.slice(0, 8);
+    console.log(`[pexels] Fetching ${sceneSlice.length} clips in parallel`);
+
     const results = await Promise.all(
-      storyboard.scenes.slice(0, 8).map((s) =>
-        pickPexelsVideo(s.query, orientation, PEXELS_API_KEY),
-      ),
+      sceneSlice.map((s) => pickPexelsVideo(s.query, orientation, PEXELS_API_KEY!)),
     );
 
+    const scenes: Scene[] = [];
     for (let i = 0; i < results.length; i++) {
       const r = results[i];
-      const s = storyboard.scenes[i];
-      if (!r) continue;
+      const s = sceneSlice[i];
+      if (!r) {
+        console.warn(`[pexels] No result for scene ${i} query="${s.query}" — skipping`);
+        continue;
+      }
       scenes.push({
         query: s.query,
         text: s.text ?? "",
@@ -255,16 +360,33 @@ Produce 4-8 scenes that flow together visually.`;
       });
     }
 
+    console.log(`[pexels] Resolved ${scenes.length}/${sceneSlice.length} scenes`);
+
     if (!scenes.length) {
-      throw new Error("Couldn't find stock footage for these scenes. Try a different topic.");
+      return errorResponse(502, "Could not find stock footage for any of the generated scenes. Try a different topic.", {
+        queries: sceneSlice.map((s) => s.query),
+      });
     }
 
-    // Bump usage counter
-    await supabase
+    // ------------------------------------------------------------------
+    // 3) Bump usage counter
+    // ------------------------------------------------------------------
+    const newCount = (profile.daily_usage_count ?? 0) + 1;
+    const { error: updateError } = await supabase
       .from("users")
-      .update({ daily_usage_count: (profile.daily_usage_count ?? 0) + 1 })
+      .update({ daily_usage_count: newCount })
       .eq("id", user.id);
 
+    if (updateError) {
+      // Non-fatal — log but don't fail the request
+      console.warn("[profile] Failed to update daily_usage_count:", updateError.message);
+    } else {
+      console.log(`[profile] daily_usage_count updated to ${newCount}`);
+    }
+
+    // ------------------------------------------------------------------
+    // Success
+    // ------------------------------------------------------------------
     return new Response(
       JSON.stringify({
         title: storyboard.title ?? topic,
@@ -274,10 +396,14 @@ Produce 4-8 scenes that flow together visually.`;
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
-    console.error("generate-video error:", e);
+    console.error("[generate-video] Unhandled exception:", e);
     return new Response(
       JSON.stringify({
-        error: e instanceof Error ? e.message : "Unknown error",
+        error: e instanceof Error ? e.message : "Unknown internal error",
+        debug: {
+          type: e instanceof Error ? e.constructor.name : typeof e,
+          stack: e instanceof Error ? (e.stack ?? "").split("\n").slice(0, 5) : null,
+        },
       }),
       {
         status: 500,
