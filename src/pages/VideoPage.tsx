@@ -36,7 +36,7 @@ const normalisePlan = (plan: string | null | undefined): string =>
   String(plan ?? "").toLowerCase().trim().replace(/[-_\s]+/g, "");
 
 const VideoPage = () => {
-  const { profile, loading } = useAuth();
+  const { profile, loading: authLoading } = useAuth();
   const isPremium =
     profile != null && PREMIUM_PLANS.includes(normalisePlan(profile.plan));
 
@@ -255,7 +255,7 @@ const VideoPage = () => {
     toast.success("Video downloaded.");
   };
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="max-w-2xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
