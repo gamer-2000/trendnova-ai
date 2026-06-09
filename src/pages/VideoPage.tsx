@@ -255,7 +255,7 @@ const VideoPage = () => {
     toast.success("Video downloaded.");
   };
 
-  if (authLoading) {
+  if (authLoading || (profile == null)) {
     return (
       <div className="max-w-2xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
