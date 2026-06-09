@@ -299,13 +299,10 @@ Return ONLY the JSON object — no markdown fencing, no commentary.`;
     }
 
     const aiJson = await aiRes.json();
-    const raw: string =
-      aiJson?.candidates?.[0]?.content?.parts
-        ?.map((p: any) => p?.text ?? "")
-        .join("") ?? "";
+    const raw: string = aiJson?.choices?.[0]?.message?.content ?? "";
 
-    console.log("[gemini] Raw storyboard length:", raw.length, "chars");
-    console.log("[gemini] Raw storyboard preview:", raw.slice(0, 200));
+    console.log("[nvidia] Raw storyboard length:", raw.length, "chars");
+    console.log("[nvidia] Raw storyboard preview:", raw.slice(0, 200));
 
     let storyboard: {
       title: string;
@@ -315,17 +312,16 @@ Return ONLY the JSON object — no markdown fencing, no commentary.`;
     try {
       storyboard = JSON.parse(raw);
     } catch {
-      // Attempt to extract JSON object from surrounding text
       const m = raw.match(/\{[\s\S]*\}/);
       if (!m) {
-        return errorResponse(502, "Gemini returned a storyboard that could not be parsed as JSON", {
+        return errorResponse(502, "NVIDIA returned a storyboard that could not be parsed as JSON", {
           rawPreview: raw.slice(0, 300),
         });
       }
       try {
         storyboard = JSON.parse(m[0]);
       } catch (e2) {
-        return errorResponse(502, "Gemini storyboard JSON extraction failed after fallback", {
+        return errorResponse(502, "NVIDIA storyboard JSON extraction failed after fallback", {
           parseError: String(e2),
           rawPreview: raw.slice(0, 300),
         });
@@ -333,10 +329,11 @@ Return ONLY the JSON object — no markdown fencing, no commentary.`;
     }
 
     if (!storyboard?.scenes?.length) {
-      return errorResponse(502, "Gemini storyboard contained no scenes", {
+      return errorResponse(502, "NVIDIA storyboard contained no scenes", {
         storyboard,
       });
     }
+
 
     console.log(`[gemini] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
 
