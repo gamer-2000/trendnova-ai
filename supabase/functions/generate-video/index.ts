@@ -124,14 +124,14 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    const NVIDIA_API_KEY = Deno.env.get("NVIDIA_API_KEY");
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
 
     const missingEnv: string[] = [];
     if (!supabaseUrl) missingEnv.push("SUPABASE_URL");
     if (!supabaseServiceKey) missingEnv.push("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseAnonKey) missingEnv.push("SUPABASE_ANON_KEY");
-    if (!GEMINI_API_KEY) missingEnv.push("GEMINI_API_KEY");
+    if (!NVIDIA_API_KEY) missingEnv.push("NVIDIA_API_KEY");
     if (!PEXELS_API_KEY) missingEnv.push("PEXELS_API_KEY");
 
     if (missingEnv.length > 0) {
