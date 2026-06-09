@@ -124,14 +124,14 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    const NVIDIA_API_KEY = Deno.env.get("NVIDIA_API_KEY");
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
 
     const missingEnv: string[] = [];
     if (!supabaseUrl) missingEnv.push("SUPABASE_URL");
     if (!supabaseServiceKey) missingEnv.push("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseAnonKey) missingEnv.push("SUPABASE_ANON_KEY");
-    if (!GEMINI_API_KEY) missingEnv.push("GEMINI_API_KEY");
+    if (!NVIDIA_API_KEY) missingEnv.push("NVIDIA_API_KEY");
     if (!PEXELS_API_KEY) missingEnv.push("PEXELS_API_KEY");
 
     if (missingEnv.length > 0) {
@@ -252,52 +252,57 @@ serve(async (req) => {
     }
 
     // ------------------------------------------------------------------
-    // 1) Storyboard via Gemini
+    // 1) Storyboard via NVIDIA (OpenAI-compatible)
     // ------------------------------------------------------------------
     const clampedDuration = Math.max(8, Math.min(60, totalDuration));
     const userPrompt = `Topic: "${topic}"
 Total target duration: ${clampedDuration} seconds.
 Aspect: ${orientation === "portrait" ? "9:16 short-form (TikTok/Reels)" : orientation === "landscape" ? "16:9 (YouTube)" : "1:1 (square)"}.
-Produce 4-8 scenes that flow together visually.`;
+Produce 4-8 scenes that flow together visually.
+Return ONLY the JSON object — no markdown fencing, no commentary.`;
 
-    console.log("[gemini] Sending storyboard request for topic:", topic);
+    console.log("[nvidia] Sending storyboard request for topic:", topic);
 
     const aiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      "https://integrate.api.nvidia.com/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${NVIDIA_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM }] },
-          contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-          generationConfig: {
-            temperature: 0.9,
-            responseMimeType: "application/json",
-            maxOutputTokens: 2048,
-          },
+          model: "meta/llama-3.3-70b-instruct",
+          messages: [
+            { role: "system", content: SYSTEM },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.9,
+          top_p: 0.95,
+          max_tokens: 2048,
+          response_format: { type: "json_object" },
+          stream: false,
         }),
       },
     );
 
-    console.log("[gemini] HTTP status:", aiRes.status);
+    console.log("[nvidia] HTTP status:", aiRes.status);
 
     if (!aiRes.ok) {
       const errText = await aiRes.text().catch(() => "(unreadable)");
-      console.error("[gemini] Error body:", errText);
-      return errorResponse(502, "Gemini storyboard generation failed", {
-        geminiStatus: aiRes.status,
-        geminiBody: errText.slice(0, 500),
+      console.error("[nvidia] Error body:", errText);
+      return errorResponse(502, "NVIDIA storyboard generation failed", {
+        nvidiaStatus: aiRes.status,
+        nvidiaBody: errText.slice(0, 500),
       });
     }
 
     const aiJson = await aiRes.json();
-    const raw: string =
-      aiJson?.candidates?.[0]?.content?.parts
-        ?.map((p: any) => p?.text ?? "")
-        .join("") ?? "";
+    const raw: string = aiJson?.choices?.[0]?.message?.content ?? "";
 
-    console.log("[gemini] Raw storyboard length:", raw.length, "chars");
-    console.log("[gemini] Raw storyboard preview:", raw.slice(0, 200));
+    console.log("[nvidia] Raw storyboard length:", raw.length, "chars");
+    console.log("[nvidia] Raw storyboard preview:", raw.slice(0, 200));
 
     let storyboard: {
       title: string;
@@ -307,17 +312,16 @@ Produce 4-8 scenes that flow together visually.`;
     try {
       storyboard = JSON.parse(raw);
     } catch {
-      // Attempt to extract JSON object from surrounding text
       const m = raw.match(/\{[\s\S]*\}/);
       if (!m) {
-        return errorResponse(502, "Gemini returned a storyboard that could not be parsed as JSON", {
+        return errorResponse(502, "NVIDIA returned a storyboard that could not be parsed as JSON", {
           rawPreview: raw.slice(0, 300),
         });
       }
       try {
         storyboard = JSON.parse(m[0]);
       } catch (e2) {
-        return errorResponse(502, "Gemini storyboard JSON extraction failed after fallback", {
+        return errorResponse(502, "NVIDIA storyboard JSON extraction failed after fallback", {
           parseError: String(e2),
           rawPreview: raw.slice(0, 300),
         });
@@ -325,12 +329,13 @@ Produce 4-8 scenes that flow together visually.`;
     }
 
     if (!storyboard?.scenes?.length) {
-      return errorResponse(502, "Gemini storyboard contained no scenes", {
+      return errorResponse(502, "NVIDIA storyboard contained no scenes", {
         storyboard,
       });
     }
 
-    console.log(`[gemini] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
+
+    console.log(`[nvidia] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
 
     // ------------------------------------------------------------------
     // 2) Pexels video fetch (parallel)

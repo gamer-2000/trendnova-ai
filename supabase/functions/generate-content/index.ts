@@ -207,39 +207,45 @@ serve(async (req) => {
       }
     }
 
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not configured");
+    const NVIDIA_API_KEY = Deno.env.get("NVIDIA_API_KEY");
+    if (!NVIDIA_API_KEY) throw new Error("NVIDIA_API_KEY not configured");
 
     const userPrompt = buildUserPrompt({ contentType, topic, tone, length, audience, keywords });
 
-    const GEMINI_MODEL = "gemini-2.5-flash";
+    const NVIDIA_MODEL = "meta/llama-3.3-70b-instruct";
     const aiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      "https://integrate.api.nvidia.com/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${NVIDIA_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: HUMAN_SYSTEM }] },
-          contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-          generationConfig: {
-            temperature: 0.95,
-            topP: 0.92,
-            maxOutputTokens: 8192,
-          },
+          model: NVIDIA_MODEL,
+          messages: [
+            { role: "system", content: HUMAN_SYSTEM },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.95,
+          top_p: 0.92,
+          max_tokens: 4096,
+          stream: false,
         }),
       },
     );
 
     if (!aiResponse.ok) {
       const errText = await aiResponse.text();
-      console.error("Gemini API error:", aiResponse.status, errText);
+      console.error("NVIDIA API error:", aiResponse.status, errText);
       if (aiResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Too many requests. Try again in a moment." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (aiResponse.status === 401 || aiResponse.status === 403) {
-        return new Response(JSON.stringify({ error: "Invalid Gemini API key. Please update GEMINI_API_KEY." }), {
+        return new Response(JSON.stringify({ error: "Invalid NVIDIA API key. Please update NVIDIA_API_KEY." }), {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -247,8 +253,7 @@ serve(async (req) => {
     }
 
     const aiJson = await aiResponse.json();
-    let fullResult: string =
-      aiJson?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("") ?? "";
+    let fullResult: string = aiJson?.choices?.[0]?.message?.content ?? "";
 
     if (!fullResult) fullResult = "No content generated. Please try again.";
 
