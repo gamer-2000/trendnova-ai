@@ -51,7 +51,6 @@ function errorResponse(
 /** Returns true when the plan string should be treated as premium. */
 function isPremiumPlan(plan: string | null | undefined): boolean {
   if (plan == null) return false;
-  // Normalise: lowercase, trim, collapse hyphens/underscores/spaces
   const normalised = String(plan).toLowerCase().trim().replace(/[-_\s]+/g, "");
   return ["premium", "pro", "paid", "active", "subscribed"].includes(normalised);
 }
@@ -182,7 +181,6 @@ serve(async (req) => {
     console.log("[auth] getUser error:", authError?.message ?? "none");
     console.log("[auth] User ID:", user?.id ?? "null");
     console.log("[auth] User email:", user?.email ?? "null");
-    console.log("[auth] User role:", user?.role ?? "null");
 
     if (authError) {
       return errorResponse(401, "Not authenticated: token verification failed", {
@@ -196,15 +194,15 @@ serve(async (req) => {
     }
 
     // ------------------------------------------------------------------
-    // Profile / plan lookup
+    // Profile / plan lookup  (NOTE: last_reset_date removed — column does not exist)
     // ------------------------------------------------------------------
     console.log(`[profile] Querying users table for id=${user.id}`);
 
     const { data: profile, error: profileError } = await supabase
       .from("users")
-      .select("plan, daily_usage_count, last_reset_date")
+      .select("plan, daily_usage_count")
       .eq("id", user.id)
-      .maybeSingle(); // returns null (not error) when no row found
+      .maybeSingle();
 
     console.log("[profile] Raw profile data:", JSON.stringify(profile));
     console.log("[profile] Profile error:", profileError ? JSON.stringify(profileError) : "none");
@@ -236,7 +234,6 @@ serve(async (req) => {
     console.log("[profile] plan (string):", planStr);
     console.log("[profile] isPremium:", premium);
     console.log("[profile] daily_usage_count:", profile.daily_usage_count);
-    console.log("[profile] last_reset_date:", profile.last_reset_date);
 
     if (!premium) {
       return errorResponse(403, "Premium subscription required to use video generation", {
@@ -329,11 +326,8 @@ Return ONLY the JSON object — no markdown fencing, no commentary.`;
     }
 
     if (!storyboard?.scenes?.length) {
-      return errorResponse(502, "NVIDIA storyboard contained no scenes", {
-        storyboard,
-      });
+      return errorResponse(502, "NVIDIA storyboard contained no scenes", { storyboard });
     }
-
 
     console.log(`[nvidia] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
 
@@ -383,7 +377,6 @@ Return ONLY the JSON object — no markdown fencing, no commentary.`;
       .eq("id", user.id);
 
     if (updateError) {
-      // Non-fatal — log but don't fail the request
       console.warn("[profile] Failed to update daily_usage_count:", updateError.message);
     } else {
       console.log(`[profile] daily_usage_count updated to ${newCount}`);
