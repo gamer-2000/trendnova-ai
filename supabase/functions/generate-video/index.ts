@@ -335,7 +335,7 @@ Return ONLY the JSON object — no markdown fencing, no commentary.`;
     }
 
 
-    console.log(`[gemini] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
+    console.log(`[nvidia] Storyboard title="${storyboard.title}" scenes=${storyboard.scenes.length}`);
 
     // ------------------------------------------------------------------
     // 2) Pexels video fetch (parallel)
