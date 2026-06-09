@@ -252,41 +252,49 @@ serve(async (req) => {
     }
 
     // ------------------------------------------------------------------
-    // 1) Storyboard via Gemini
+    // 1) Storyboard via NVIDIA (OpenAI-compatible)
     // ------------------------------------------------------------------
     const clampedDuration = Math.max(8, Math.min(60, totalDuration));
     const userPrompt = `Topic: "${topic}"
 Total target duration: ${clampedDuration} seconds.
 Aspect: ${orientation === "portrait" ? "9:16 short-form (TikTok/Reels)" : orientation === "landscape" ? "16:9 (YouTube)" : "1:1 (square)"}.
-Produce 4-8 scenes that flow together visually.`;
+Produce 4-8 scenes that flow together visually.
+Return ONLY the JSON object — no markdown fencing, no commentary.`;
 
-    console.log("[gemini] Sending storyboard request for topic:", topic);
+    console.log("[nvidia] Sending storyboard request for topic:", topic);
 
     const aiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      "https://integrate.api.nvidia.com/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${NVIDIA_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM }] },
-          contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-          generationConfig: {
-            temperature: 0.9,
-            responseMimeType: "application/json",
-            maxOutputTokens: 2048,
-          },
+          model: "meta/llama-3.3-70b-instruct",
+          messages: [
+            { role: "system", content: SYSTEM },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.9,
+          top_p: 0.95,
+          max_tokens: 2048,
+          response_format: { type: "json_object" },
+          stream: false,
         }),
       },
     );
 
-    console.log("[gemini] HTTP status:", aiRes.status);
+    console.log("[nvidia] HTTP status:", aiRes.status);
 
     if (!aiRes.ok) {
       const errText = await aiRes.text().catch(() => "(unreadable)");
-      console.error("[gemini] Error body:", errText);
-      return errorResponse(502, "Gemini storyboard generation failed", {
-        geminiStatus: aiRes.status,
-        geminiBody: errText.slice(0, 500),
+      console.error("[nvidia] Error body:", errText);
+      return errorResponse(502, "NVIDIA storyboard generation failed", {
+        nvidiaStatus: aiRes.status,
+        nvidiaBody: errText.slice(0, 500),
       });
     }
 
