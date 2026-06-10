@@ -24,7 +24,7 @@ const plans = [
     name: "Premium",
     price: "₹500",
     period: "/month",
-    features: ["Unlimited writes", "Fastest responses", "Advanced content styles", "1-on-1 support"],
+    features: ["Unlimited writes", "Fastest responses", "Advanced content styles",  "Best Quality Content", "1-on-1 support"],
     cta: "Go Premium",
     popular: false,
   },
