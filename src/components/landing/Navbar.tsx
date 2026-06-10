@@ -72,6 +72,8 @@ const Navbar = () => {
         </AnimatePresence>
       </nav>
 
+      <AnnouncementBar />
+
       <Dialog open={donateOpen} onOpenChange={setDonateOpen}>
         <DialogContent className="glass-card border-border/30">
           <DialogHeader>
