@@ -101,6 +101,7 @@ export type Database = {
           daily_usage_count: number
           email: string
           id: string
+          last_reset_date: string | null
           plan: string
         }
         Insert: {
@@ -109,6 +110,7 @@ export type Database = {
           daily_usage_count?: number
           email: string
           id: string
+          last_reset_date?: string | null
           plan?: string
         }
         Update: {
@@ -117,6 +119,7 @@ export type Database = {
           daily_usage_count?: number
           email?: string
           id?: string
+          last_reset_date?: string | null
           plan?: string
         }
         Relationships: []
