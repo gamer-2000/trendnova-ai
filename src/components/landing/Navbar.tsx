@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import AnnouncementBar from "@/components/AnnouncementBar";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
