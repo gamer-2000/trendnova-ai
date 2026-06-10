@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import AnnouncementBar from "@/components/AnnouncementBar";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -70,6 +71,8 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </nav>
+
+      <AnnouncementBar />
 
       <Dialog open={donateOpen} onOpenChange={setDonateOpen}>
         <DialogContent className="glass-card border-border/30">
