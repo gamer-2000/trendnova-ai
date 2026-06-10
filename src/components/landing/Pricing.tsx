@@ -14,7 +14,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "₹50",
+    price: "₹100",
     period: "/month",
     features: ["20 writes per day", "Higher quality output", "Save your history", "Priority support"],
     cta: "Upgrade to Pro",
@@ -22,7 +22,7 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "₹100",
+    price: "₹500",
     period: "/month",
     features: ["Unlimited writes", "Fastest responses", "Advanced content styles", "1-on-1 support"],
     cta: "Go Premium",
