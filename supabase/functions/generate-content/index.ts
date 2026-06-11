@@ -219,7 +219,9 @@ serve(async (req) => {
 
     const userPrompt = buildUserPrompt({ contentType, topic, tone, length, audience, keywords });
 
-    const NVIDIA_MODEL = "meta/llama-3.3-70b-instruct";
+    const isFree = !profile || profile.plan === "free";
+    // Free tier uses a smaller/faster model and tighter token budget for slightly lower quality.
+    const NVIDIA_MODEL = isFree ? "meta/llama-3.1-8b-instruct" : "meta/llama-3.3-70b-instruct";
     const aiResponse = await fetch(
       "https://integrate.api.nvidia.com/v1/chat/completions",
       {
@@ -235,9 +237,9 @@ serve(async (req) => {
             { role: "system", content: HUMAN_SYSTEM },
             { role: "user", content: userPrompt },
           ],
-          temperature: 0.95,
-          top_p: 0.92,
-          max_tokens: 4096,
+          temperature: isFree ? 0.8 : 0.95,
+          top_p: isFree ? 0.85 : 0.92,
+          max_tokens: isFree ? 1024 : 4096,
           stream: false,
         }),
       },
