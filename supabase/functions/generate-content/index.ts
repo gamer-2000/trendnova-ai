@@ -198,7 +198,14 @@ serve(async (req) => {
 
       const plan = profile.plan;
       const usage = profile.daily_usage_count;
-      const limit = plan === "premium" ? Infinity : plan === "pro" ? 20 : 1;
+      const limit = plan === "premium" ? Infinity : plan === "pro" ? 20 : 2;
+
+      // Free tier: only youtube-script allowed
+      if (plan === "free" && contentType !== "youtube-script") {
+        return new Response(JSON.stringify({ error: "Free plan only supports YouTube scripts. Upgrade to unlock all content types." }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
 
       if (usage >= limit) {
         return new Response(JSON.stringify({ error: "Daily limit reached. Upgrade your plan." }), {
