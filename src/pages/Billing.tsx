@@ -4,9 +4,9 @@ import { Check, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const plans = [
-  { name: "Free", price: "₹0", features: ["5 generations/day", "All content types", "Basic AI"] },
-  { name: "Pro", price: "₹50/mo", features: ["20 generations/day", "Better AI quality", "Save history"] },
-  { name: "Premium", price: "₹100/mo", features: ["Unlimited generations", "Priority responses", "Advanced viral content"] },
+  { name: "Free", price: "₹0", features: ["2 generations/day", "YouTube scripts only", "Standard quality AI"] },
+  { name: "Pro", price: "₹100/mo", features: ["20 generations/day", "All content types", "Higher quality AI", "Save history"] },
+  { name: "Premium", price: "₹500/mo", features: ["Unlimited generations", "Best quality AI", "Priority responses", "Advanced viral content"] },
 ];
 
 const Billing = () => {
