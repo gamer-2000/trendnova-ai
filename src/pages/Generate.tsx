@@ -105,20 +105,30 @@ const Generate = () => {
 
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
-          {contentTypes.map((ct) => (
-            <button
-              key={ct.id}
-              onClick={() => setSelectedType(ct.id)}
-              className={`glass-card p-4 text-center transition-all duration-200 ${
-                selectedType === ct.id ? "border-primary/50 bg-primary/5" : "hover:border-border/50"
-              }`}
-            >
-              <ct.icon className={`h-5 w-5 mx-auto mb-2 ${selectedType === ct.id ? "text-primary" : "text-muted-foreground"}`} />
-              <span className={`text-xs font-medium ${selectedType === ct.id ? "text-primary" : "text-muted-foreground"}`}>
-                {ct.label}
-              </span>
-            </button>
-          ))}
+          {contentTypes.map((ct) => {
+            const locked = isFree && ct.id !== "youtube-script";
+            return (
+              <button
+                key={ct.id}
+                onClick={() => {
+                  if (locked) {
+                    toast.error("Upgrade to Pro or Premium to unlock this content type.");
+                    return;
+                  }
+                  setSelectedType(ct.id);
+                }}
+                className={`glass-card p-4 text-center transition-all duration-200 relative ${
+                  selectedType === ct.id ? "border-primary/50 bg-primary/5" : "hover:border-border/50"
+                } ${locked ? "opacity-50" : ""}`}
+              >
+                <ct.icon className={`h-5 w-5 mx-auto mb-2 ${selectedType === ct.id ? "text-primary" : "text-muted-foreground"}`} />
+                <span className={`text-xs font-medium ${selectedType === ct.id ? "text-primary" : "text-muted-foreground"}`}>
+                  {ct.label}
+                </span>
+                {locked && <span className="absolute top-1 right-1 text-[9px] text-muted-foreground">🔒</span>}
+              </button>
+            );
+          })}
         </div>
 
         <div className="space-y-4">
