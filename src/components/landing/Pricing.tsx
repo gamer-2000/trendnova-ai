@@ -8,7 +8,7 @@ const plans = [
     name: "Free",
     price: "₹0",
     period: "/month",
-    features: ["5 writes per day", "All content types", "Standard quality", "Community support"],
+    features: ["2 generations per day", "YouTube scripts only", "Standard quality", "Community support"],
     cta: "Start Free",
     popular: false,
   },
