@@ -26,7 +26,7 @@ const TermsOfService = () => (
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">3. Accounts & Plans</h2>
-          <p>Users may access limited features as guests (up to 3 generations). Registered users receive a Free plan with 10 daily generations. Pro and Premium plans offer additional features and higher limits. Plan upgrades are handled via email at trendnova0001@gmail.com.</p>
+          <p>Users may access limited features as guests (up to 3 generations). Registered users receive a Free plan with 2 daily generations of YouTube scripts. Pro and Premium plans offer additional features and higher limits. Plan upgrades are handled via email at trendnova0001@gmail.com.</p>
         </section>
 
         <section>

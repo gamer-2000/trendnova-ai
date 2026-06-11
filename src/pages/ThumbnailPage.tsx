@@ -66,7 +66,7 @@ const ThumbnailPage = () => {
           <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h2 className="font-display text-lg font-semibold text-foreground mb-2">Pro & Premium Only</h2>
           <p className="text-sm text-muted-foreground mb-6">
-            Thumbnail creation is available on Pro (₹50/mo) and Premium (₹100/mo) plans.
+            Thumbnail creation is available on Pro (₹100/mo) and Premium (₹500/mo) plans.
           </p>
           <Link to="/dashboard/billing">
             <Button variant="hero">Upgrade Now</Button>
