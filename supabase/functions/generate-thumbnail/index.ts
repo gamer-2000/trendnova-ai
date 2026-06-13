@@ -24,12 +24,26 @@ serve(async (req) => {
     const { data: profile } = await supabase.from("users").select("*").eq("id", user.id).single();
     if (!profile) throw new Error("User not found");
 
-    if (profile.plan !== "pro" && profile.plan !== "premium") {
-      return new Response(JSON.stringify({ error: "Thumbnail creation is available on Pro and Premium plans. Please upgrade." }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const FREE_DAILY_THUMBNAIL_LIMIT = 1;
+const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+if (profile.plan !== "pro" && profile.plan !== "premium") {
+  const lastReset = profile.last_reset_date?.split("T")[0];
+  const usageToday = lastReset === today ? (profile.daily_usage_count ?? 0) : 0;
+
+  if (usageToday >= FREE_DAILY_THUMBNAIL_LIMIT) {
+    return new Response(
+      JSON.stringify({ error: "Free plan allows 1 thumbnail per day. Upgrade to Pro for unlimited access." }),
+      { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Increment usage
+  await supabase.from("users").update({
+    daily_usage_count: usageToday + 1,
+    last_reset_date: new Date().toISOString(),
+  }).eq("id", user.id);
+}
 
     const { prompt } = await req.json();
     if (!prompt || typeof prompt !== "string") throw new Error("Prompt is required");
