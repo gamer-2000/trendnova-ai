@@ -82,20 +82,20 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+        className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
           active
-            ? "bg-primary/10 text-primary"
-            : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            ? "bg-primary/15 text-primary shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-sm border border-primary/20"
+            : "text-muted-foreground hover:text-foreground hover:bg-white/5 hover:backdrop-blur-sm border border-transparent"
         }`}
       >
         <Icon className="h-4 w-4 shrink-0" />
         <span className="flex-1">{label}</span>
         {badge && (
           <span
-            className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${
               badgeStyle === "premium"
-                ? "bg-accent/20 text-accent"
-                : "bg-primary/20 text-primary"
+                ? "bg-accent/10 text-accent border-accent/20"
+                : "bg-primary/10 text-primary border-primary/20"
             }`}
           >
             {badge}
@@ -108,78 +108,110 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside className="w-56 border-r border-border/30 bg-card/40 backdrop-blur-xl flex flex-col fixed h-full z-20">
-        {/* Logo */}
-        <div className="px-4 py-4 border-b border-border/30">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
-              <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
-            </div>
-            <span className="font-display text-lg font-bold text-foreground">TrendNova</span>
-          </Link>
-        </div>
+      <aside className="w-64 flex flex-col fixed h-full z-20 p-3">
+        <div
+          className="flex flex-col h-full rounded-2xl border border-white/10 overflow-hidden"
+          style={{
+            background: "rgba(var(--card-rgb, 255 255 255) / 0.05)",
+            backdropFilter: "blur(24px) saturate(180%)",
+            WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            boxShadow: "inset 0 1px 0 0 rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.12)",
+          }}
+        >
+          {/* Logo */}
+          <div className="px-4 py-4 border-b border-white/8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-primary/20 border border-primary/30"
+                style={{ backdropFilter: "blur(8px)" }}
+              >
+                <Sparkles className="h-4 w-4 text-primary" />
+              </div>
+              <span className="font-display text-lg font-bold text-foreground">TrendNova</span>
+            </Link>
+          </div>
 
-        {/* User block */}
-        <div className="px-3 py-3">
-          <div className="glass-card px-3 py-2.5">
-            <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
-            <div className="flex items-center gap-1.5 mt-1.5">
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${planDot}`} />
-              <span className={`text-[11px] font-semibold uppercase tracking-wide ${planColor}`}>
-                {profile?.plan ?? "free"} plan
-              </span>
+          {/* User block */}
+          <div className="px-3 py-3">
+            <div
+              className="px-3 py-2.5 rounded-xl border border-white/10"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${planDot}`} />
+                <span className={`text-[11px] font-semibold uppercase tracking-wide ${planColor}`}>
+                  {profile?.plan ?? "free"} plan
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-3 overflow-y-auto space-y-0.5">
-          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60 px-3 pt-2 pb-1">
-            Workspace
-          </p>
-          {workspaceNav.map((item) => (
-            <NavLink key={item.to} {...item} />
-          ))}
+          {/* Nav */}
+          <nav className="flex-1 px-3 overflow-y-auto space-y-0.5">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/50 px-3 pt-2 pb-1">
+              Workspace
+            </p>
+            {workspaceNav.map((item) => (
+              <NavLink key={item.to} {...item} />
+            ))}
 
-          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60 px-3 pt-4 pb-1">
-            Account
-          </p>
-          {accountNav.map((item) => (
-            <NavLink key={item.to} {...item} />
-          ))}
+            <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/50 px-3 pt-4 pb-1">
+              Account
+            </p>
+            {accountNav.map((item) => (
+              <NavLink key={item.to} {...item} />
+            ))}
 
-          {profile?.email === "fotbol668@gmail.com" && (
-            <NavLink to="/admin" label="Admin" icon={Shield} />
-          )}
-        </nav>
+            {profile?.email === "fotbol668@gmail.com" && (
+              <NavLink to="/admin" label="Admin" icon={Shield} />
+            )}
+          </nav>
 
-        {/* Footer */}
-        <div className="px-3 py-3 border-t border-border/30">
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-            Sign out
-          </button>
+          {/* Footer */}
+          <div className="px-3 py-3 border-t border-white/8">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200"
+            >
+              <LogOut className="h-4 w-4 shrink-0" />
+              Sign out
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Main */}
-      <div className="flex-1 ml-56 flex flex-col min-h-screen">
+      <div className="flex-1 ml-64 flex flex-col min-h-screen">
         {/* Top bar */}
-        <header className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border/30 px-6 h-14 flex items-center justify-between">
+        <header
+          className="sticky top-0 z-10 px-6 h-14 flex items-center justify-between border-b border-white/8"
+          style={{
+            background: "rgba(var(--background-rgb, 0 0 0) / 0.6)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          }}
+        >
           <h1 className="text-[15px] font-medium text-foreground">{pageTitle}</h1>
           <div className="flex items-center gap-2">
             {profile?.generations_count !== undefined && (
-              <div className="flex items-center gap-1.5 bg-secondary/70 border border-border/30 rounded-full px-3 py-1.5 text-xs text-muted-foreground">
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-muted-foreground border border-white/10"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
                 <Wand2 className="h-3.5 w-3.5 text-primary" />
                 {profile.generations_count} generations
               </div>
             )}
             <Button
               size="sm"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 h-8 text-xs font-medium rounded-lg"
+              className="bg-primary/90 hover:bg-primary text-primary-foreground gap-1.5 h-8 text-xs font-medium rounded-xl border border-primary/30 shadow-[0_0_12px_rgba(var(--primary-rgb,139,92,246)/0.3)]"
               onClick={() => navigate("/dashboard/generate")}
             >
               <Wand2 className="h-3.5 w-3.5" />
