@@ -1,70 +1,95 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Sparkles, Mail, Shield, Zap } from "lucide-react";
+import { ArrowLeft, Sparkles, Target, Users, Zap, Heart, Mail, MessagesSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/landing/Navbar";
+import Footer from "@/components/landing/Footer";
+
+const values = [
+  { icon: Target, title: "Human first", desc: "Content that reads like a person wrote it — not a language model." },
+  { icon: Zap, title: "Ship fast", desc: "From idea to shippable draft in under a minute, every time." },
+  { icon: Heart, title: "Fair pricing", desc: "No dark patterns, no auto-billing. Cancel with a single email." },
+  { icon: Users, title: "Creator-led", desc: "Built with creators who ship every day, not for enterprise slide decks." },
+];
 
 const About = () => (
-  <div className="min-h-screen bg-background text-foreground">
-    <div className="max-w-3xl mx-auto px-4 py-16">
-      <Link to="/">
-        <Button variant="ghost" size="sm" className="mb-8 gap-2">
-          <ArrowLeft className="h-4 w-4" /> Back to Home
-        </Button>
-      </Link>
+  <div className="min-h-screen bg-background">
+    <Navbar />
+    <main className="pt-32 pb-24">
+      <div className="max-w-4xl mx-auto px-4">
+        <Link to="/">
+          <Button variant="ghost" size="sm" className="mb-10 gap-2 rounded-full">
+            <ArrowLeft className="h-4 w-4" /> Back home
+          </Button>
+        </Link>
 
-      <div className="flex items-center gap-3 mb-6">
-        <Sparkles className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-display font-bold">About TrendNova</h1>
-      </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-border/50 px-3 py-1 text-xs text-muted-foreground mb-6">
+          <Sparkles className="h-3.5 w-3.5 text-primary" /> About TrendNova
+        </div>
 
-      <div className="space-y-8 text-muted-foreground leading-relaxed">
-        <section>
-          <p className="text-lg">
-            TrendNova is an AI-powered content generation platform designed for creators, marketers, and businesses. 
-            We help you create viral-ready content for YouTube, TikTok, Instagram, blogs, and more — in seconds.
-          </p>
-        </section>
+        <h1 className="font-display text-5xl sm:text-6xl font-semibold tracking-tight mb-6">
+          Content creation, <span className="gradient-text-primary">democratized.</span>
+        </h1>
 
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" /> Our Mission
-          </h2>
-          <p>
-            We believe every creator deserves access to powerful AI tools. Our mission is to democratize content creation 
-            by providing an intuitive, affordable platform that transforms ideas into engaging, trend-optimized content. 
-            Whether you're a solo YouTuber or a growing brand, TrendNova helps you stay ahead of the curve.
-          </p>
-        </section>
+        <p className="text-xl text-muted-foreground leading-relaxed mb-16 max-w-2xl">
+          TrendNova is an AI workspace for creators, marketers, agencies, and brands. Our mission is to make
+          world-class content creation available to everyone — regardless of budget, team size, or writing background.
+        </p>
 
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" /> What We Offer
-          </h2>
-          <ul className="list-disc list-inside space-y-2">
-            <li>AI-generated YouTube titles, descriptions, tags, and scripts</li>
-            <li>TikTok video ideas and captions</li>
-            <li>Blog post outlines and full articles</li>
-            <li>Instagram captions and hashtag suggestions</li>
-            <li>Custom thumbnail generation (Pro & Premium)</li>
-            <li>Tweet and thread generation</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Mail className="h-5 w-5 text-primary" /> Contact Us
-          </h2>
-          <p>
-            Have questions, feedback, or partnership inquiries? We'd love to hear from you.
-          </p>
-          <div className="glass-card p-4 mt-3 rounded-lg">
-            <p className="text-foreground font-semibold">Email: <span className="text-primary select-all">trendnova0001@gmail.com</span></p>
+        <div className="glass-card p-8 sm:p-10 mb-16">
+          <h2 className="font-display text-2xl font-semibold mb-4">Our story</h2>
+          <div className="space-y-4 text-muted-foreground leading-relaxed">
+            <p>
+              TrendNova started as a weekend tool to escape the blank-page problem. We were creators tired of
+              spending hours on scripts, captions, and thumbnails when the ideas were already in our heads.
+            </p>
+            <p>
+              Today it's a full AI workspace used by thousands of creators, agencies, and small businesses across
+              16 content formats — from YouTube scripts and TikTok hooks to blog articles, product descriptions,
+              and ad copy.
+            </p>
+            <p>
+              We're a small independent team obsessed with two things: output that doesn't sound like a bot, and
+              pricing that respects the people we serve.
+            </p>
           </div>
-          <p className="text-sm mt-3">
-            We typically respond within 24–48 hours. For urgent matters, please include "URGENT" in your subject line.
-          </p>
-        </section>
+        </div>
+
+        <h2 className="font-display text-3xl font-semibold mb-8">What we stand for</h2>
+        <div className="grid sm:grid-cols-2 gap-4 mb-16">
+          {values.map((v) => (
+            <div key={v.title} className="glass-card p-6">
+              <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <v.icon className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="font-display font-semibold text-lg mb-2">{v.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{v.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="glass-card p-8 sm:p-10 grid sm:grid-cols-2 gap-6">
+          <a href="mailto:trendnova0001@gmail.com" className="flex items-start gap-4 group">
+            <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+              <Mail className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <div className="font-semibold text-foreground group-hover:text-primary transition-colors">Email us</div>
+              <div className="text-sm text-muted-foreground">trendnova0001@gmail.com</div>
+            </div>
+          </a>
+          <a href="https://discord.gg/P36rMNgnZV" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group">
+            <div className="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/30 flex items-center justify-center flex-shrink-0">
+              <MessagesSquare className="h-5 w-5 text-[#a1a8ff]" />
+            </div>
+            <div>
+              <div className="font-semibold text-foreground group-hover:text-primary transition-colors">Join Discord</div>
+              <div className="text-sm text-muted-foreground">Support, updates, community</div>
+            </div>
+          </a>
+        </div>
       </div>
-    </div>
+    </main>
+    <Footer />
   </div>
 );
 
