@@ -197,7 +197,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         >
           <h1 className="text-[15px] font-medium text-foreground">{pageTitle}</h1>
           <div className="flex items-center gap-2">
-            {profile?.generations_count !== undefined && (
+            {profile?.daily_usage_count !== undefined && (
               <div
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-muted-foreground border border-white/10"
                 style={{
@@ -206,7 +206,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 }}
               >
                 <Wand2 className="h-3.5 w-3.5 text-primary" />
-                {profile.generations_count} generations
+                {profile.daily_usage_count} generations
               </div>
             )}
             <Button
