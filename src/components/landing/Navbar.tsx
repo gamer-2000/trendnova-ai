@@ -1,46 +1,78 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Menu, X, Heart, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, Menu, X, MessagesSquare } from "lucide-react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import AnnouncementBar from "@/components/AnnouncementBar";
+
+const links = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [donateOpen, setDonateOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/20 rounded-none">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-background/70 backdrop-blur-xl border-b border-border/40"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="font-display text-xl font-bold text-foreground">TrendNova</span>
+            <div className="relative">
+              <Sparkles className="h-6 w-6 text-primary" />
+              <div className="absolute inset-0 blur-md bg-primary/50 -z-10" />
+            </div>
+            <span className="font-display text-lg font-semibold tracking-tight text-foreground">TrendNova</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Features</a>
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Pricing</a>
-            <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors text-sm">About</Link>
-            <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Contact</Link>
-            <a href="https://discord.gg/P36rMNgnZV" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#5865F2] transition-colors text-sm flex items-center gap-1">
-              <MessageCircle className="h-4 w-4" /> Join Discord
+          <div className="hidden md:flex items-center gap-1 rounded-full border border-border/40 bg-card/30 backdrop-blur-md px-1.5 py-1.5">
+            {links.map((l) =>
+              l.to ? (
+                <Link key={l.label} to={l.to} className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-full hover:bg-secondary/60 transition-colors">
+                  {l.label}
+                </Link>
+              ) : (
+                <a key={l.label} href={l.href} className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-full hover:bg-secondary/60 transition-colors">
+                  {l.label}
+                </a>
+              )
+            )}
+            <a
+              href="https://discord.gg/P36rMNgnZV"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-full hover:bg-secondary/60 transition-colors inline-flex items-center gap-1.5"
+            >
+              <MessagesSquare className="h-3.5 w-3.5" /> Discord
             </a>
-            <Button variant="ghost" size="sm" className="gap-1 text-pink-400 hover:text-pink-300" onClick={() => setDonateOpen(true)}>
-              <Heart className="h-4 w-4" /> Donate
-            </Button>
-            <Link to="/login"><Button variant="ghost" size="sm">Log in</Button></Link>
-            <Link to="/signup"><Button variant="hero" size="sm">Start Free</Button></Link>
           </div>
 
-          <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
+          <div className="hidden md:flex items-center gap-2">
+            <Link to="/login">
+              <Button variant="ghost" size="sm" className="rounded-full">Login</Button>
+            </Link>
+            <Link to="/signup">
+              <Button size="sm" className="gradient-button rounded-full px-4">Start Free</Button>
+            </Link>
+          </div>
+
+          <button className="md:hidden text-foreground" onClick={() => setOpen(!open)} aria-label="Menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -51,21 +83,23 @@ const Navbar = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border/20 bg-card/90 backdrop-blur-xl"
+              className="md:hidden border-t border-border/40 bg-background/90 backdrop-blur-xl"
             >
-              <div className="px-4 py-4 flex flex-col gap-3">
-                <a href="#features" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>Features</a>
-                <a href="#pricing" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>Pricing</a>
-                <Link to="/about" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>About</Link>
-                <Link to="/contact" className="text-muted-foreground hover:text-foreground py-2" onClick={() => setOpen(false)}>Contact</Link>
-                <a href="https://discord.gg/P36rMNgnZV" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#5865F2] py-2 flex items-center gap-2" onClick={() => setOpen(false)}>
-                  <MessageCircle className="h-4 w-4" /> Join Discord
+              <div className="px-4 py-4 flex flex-col gap-1">
+                {links.map((l) =>
+                  l.to ? (
+                    <Link key={l.label} to={l.to} onClick={() => setOpen(false)} className="text-muted-foreground py-2.5 px-2 rounded-lg hover:bg-secondary/60">{l.label}</Link>
+                  ) : (
+                    <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-muted-foreground py-2.5 px-2 rounded-lg hover:bg-secondary/60">{l.label}</a>
+                  )
+                )}
+                <a href="https://discord.gg/P36rMNgnZV" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="text-muted-foreground py-2.5 px-2 rounded-lg hover:bg-secondary/60 inline-flex items-center gap-2">
+                  <MessagesSquare className="h-4 w-4" /> Discord
                 </a>
-                <Button variant="ghost" className="w-full justify-start gap-2 text-pink-400" onClick={() => { setDonateOpen(true); setOpen(false); }}>
-                  <Heart className="h-4 w-4" /> Donate
-                </Button>
-                <Link to="/login" onClick={() => setOpen(false)}><Button variant="ghost" className="w-full">Log in</Button></Link>
-                <Link to="/signup" onClick={() => setOpen(false)}><Button variant="hero" className="w-full">Start Free</Button></Link>
+                <div className="flex gap-2 pt-2">
+                  <Link to="/login" onClick={() => setOpen(false)} className="flex-1"><Button variant="outline" className="w-full rounded-full">Login</Button></Link>
+                  <Link to="/signup" onClick={() => setOpen(false)} className="flex-1"><Button className="w-full gradient-button rounded-full">Start Free</Button></Link>
+                </div>
               </div>
             </motion.div>
           )}
@@ -73,23 +107,6 @@ const Navbar = () => {
       </nav>
 
       <AnnouncementBar />
-
-      <Dialog open={donateOpen} onOpenChange={setDonateOpen}>
-        <DialogContent className="glass-card border-border/30">
-          <DialogHeader>
-            <DialogTitle className="font-display flex items-center gap-2">
-              <Heart className="h-5 w-5 text-pink-400" /> Support TrendNova
-            </DialogTitle>
-            <DialogDescription>
-              Love TrendNova? Help us keep building! Send your donation to:
-            </DialogDescription>
-          </DialogHeader>
-          <div className="glass-card p-4 text-center">
-            <p className="text-lg font-semibold text-foreground select-all">trendnova0001@gmail.com</p>
-            <p className="text-xs text-muted-foreground mt-2">Send via UPI, PayPal, or any payment method to this email</p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };
