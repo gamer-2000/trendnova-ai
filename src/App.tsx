@@ -123,6 +123,13 @@ const App = () => (
               </DashboardRoute>
             } />
 
+            <Route path="/dashboard/captions" element={
+              <DashboardRoute>
+                <CaptionsPage />
+              </DashboardRoute>
+            } />
+
+
             <Route path="/dashboard/video" element={
               <DashboardRoute>
                 <VideoPage />
