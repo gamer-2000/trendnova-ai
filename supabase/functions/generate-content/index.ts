@@ -264,7 +264,7 @@ serve(async (req) => {
     const NVIDIA_API_KEY = Deno.env.get("NVIDIA_API_KEY");
     if (!NVIDIA_API_KEY) throw new Error("NVIDIA_API_KEY not configured");
 
-    const userPrompt = buildUserPrompt({ contentType, topic, tone, length, audience, keywords });
+    const userPrompt = buildUserPrompt({ contentType, topic, tone, length, audience, keywords, platform, emoji, hashtagCount, variants });
 
     const isFree = !profile || profile.plan === "free";
     // Free tier uses a smaller/faster model and tighter token budget for slightly lower quality.
