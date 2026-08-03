@@ -22,7 +22,9 @@ import AdminPanel from "./pages/AdminPanel";
 import GuestGenerate from "./pages/GuestGenerate";
 import NotFound from "./pages/NotFound";
 import ThumbnailPage from "./pages/ThumbnailPage";
+import CaptionsPage from "./pages/CaptionsPage";
 import VideoPage from "./pages/VideoPage";
+
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -120,6 +122,13 @@ const App = () => (
                 <ThumbnailPage />
               </DashboardRoute>
             } />
+
+            <Route path="/dashboard/captions" element={
+              <DashboardRoute>
+                <CaptionsPage />
+              </DashboardRoute>
+            } />
+
 
             <Route path="/dashboard/video" element={
               <DashboardRoute>
