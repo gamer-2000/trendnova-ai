@@ -63,6 +63,10 @@ function buildUserPrompt(opts: {
   length: Length;
   audience?: string;
   keywords?: string;
+  platform?: string;
+  emoji?: boolean;
+  hashtagCount?: number;
+  variants?: number;
 }) {
   const { contentType, topic, tone, length, audience, keywords } = opts;
   const aud = audience?.trim() ? `Audience: ${audience.trim()}.` : "";
@@ -71,8 +75,42 @@ function buildUserPrompt(opts: {
   const lenLine = `Length: ${lenFor(contentType, length)}`;
   const meta = [toneLine, lenLine, aud, kw].filter(Boolean).join("\n");
 
+  const platform = opts.platform ?? "instagram";
+  const variants = Math.min(Math.max(opts.variants ?? 5, 1), 10);
+  const hashtagCount = Math.min(Math.max(opts.hashtagCount ?? 8, 0), 30);
+  const emojiRule = opts.emoji
+    ? "Use emojis sparingly and only where a real person would — never more than 3 per caption, never as bullet points."
+    : "Use zero emojis.";
+  const platformRule: Record<string, string> = {
+    instagram: "Instagram: first line is the hook (it's all people see before 'more'). Line breaks between thoughts. Conversational.",
+    tiktok: "TikTok: very short, punchy, spoken-sounding. Under 150 characters where possible.",
+    youtube: "YouTube: works as a Shorts caption or video description opener. Clear, searchable phrasing.",
+    x: "X/Twitter: under 280 characters, one sharp idea, no hashtag spam (max 2).",
+    linkedin: "LinkedIn: hook line, then a short lesson or number. Professional but not stiff.",
+    facebook: "Facebook: friendly and story-first, a bit longer, ends with a question.",
+  };
+
   const briefs: Record<string, string> = {
+    "captions": `Write ${variants} different ${platform} captions for: "${topic}".
+
+${platformRule[platform] ?? platformRule.instagram}
+${emojiRule}
+${hashtagCount > 0 ? `After each caption, add exactly ${hashtagCount} relevant hashtags on their own line — mix broad and niche, no #love #instagood filler.` : "Do not add hashtags."}
+
+Rules:
+- Every caption must be genuinely different in angle: one story, one bold opinion, one question, one useful tip, one behind-the-scenes.
+- No "link in bio!!!", no "double tap if you agree", no generic hype.
+- End each with a natural reason for someone to comment.
+
+Format each as:
+${"```"}
+1. <caption text>
+<hashtags>
+${"```"}
+Numbered, separated by a blank line. No preamble, no explanation.`,
+
     "youtube-script": `Write a YouTube video script about: "${topic}".
+
 
 Structure it the way a real creator talks on camera:
 - A 5-second hook that isn't clickbait. Open with a specific claim, a question someone is actually asking, or a tiny story.
