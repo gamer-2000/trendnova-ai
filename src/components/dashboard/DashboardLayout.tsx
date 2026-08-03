@@ -11,6 +11,7 @@ import {
   Shield,
   Image,
   Video,
+  Quote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdBanner from "@/components/AdBanner";
@@ -18,6 +19,7 @@ import AdBanner from "@/components/AdBanner";
 const workspaceNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/dashboard/generate", label: "Generate", icon: Wand2 },
+  { to: "/dashboard/captions", label: "Captions", icon: Quote, badge: "PRO", badgeStyle: "pro" },
   { to: "/dashboard/video", label: "Video", icon: Video, badge: "PREMIUM", badgeStyle: "premium" },
   { to: "/dashboard/thumbnails", label: "Thumbnails", icon: Image, badge: "PRO", badgeStyle: "pro" },
 ];
@@ -31,6 +33,7 @@ const accountNav = [
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/dashboard/generate": "Generate",
+  "/dashboard/captions": "Captions",
   "/dashboard/video": "Video",
   "/dashboard/thumbnails": "Thumbnails",
   "/dashboard/history": "History",
