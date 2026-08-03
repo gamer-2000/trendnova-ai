@@ -194,6 +194,10 @@ serve(async (req) => {
       length = "medium",
       audience,
       keywords,
+      platform,
+      emoji,
+      hashtagCount,
+      variants,
     } = body as {
       contentType: string;
       topic: string;
@@ -202,7 +206,12 @@ serve(async (req) => {
       length?: Length;
       audience?: string;
       keywords?: string;
+      platform?: string;
+      emoji?: boolean;
+      hashtagCount?: number;
+      variants?: number;
     };
+
 
     if (!topic || typeof topic !== "string" || topic.trim().length < 2) {
       return new Response(JSON.stringify({ error: "Please enter a topic." }), {
