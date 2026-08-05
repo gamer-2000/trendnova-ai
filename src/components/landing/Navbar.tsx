@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Menu, X, MessagesSquare } from "lucide-react";
+import { Menu, X, MessagesSquare } from "lucide-react";
+import tnLogo from "@/assets/tn-logo.png";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnnouncementBar from "@/components/AnnouncementBar";
@@ -34,10 +35,7 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="relative">
-              <Sparkles className="h-6 w-6 text-primary" />
-              <div className="absolute inset-0 blur-md bg-primary/50 -z-10" />
-            </div>
+            <img src={tnLogo} alt="TrendNova logo" className="h-7 w-auto" />
             <span className="font-display text-lg font-semibold tracking-tight text-foreground">TrendNova</span>
           </Link>
 
